@@ -14,46 +14,47 @@
 
 #include <kernel.h>
 
-#include <Magick++.h>
-#include <magick/image.h>
-
 using rgb_matrix::RGBMatrix;
 using rgb_matrix::Canvas;
+
+//Define constants for screen resolution and pixel channels.
+#define V_RES 32
+#define H_RES 64
+#define NUM_CHANNELS 3
 
 volatile bool interrupt_received = false;
 static void InterruptHandler(int signo) {
   interrupt_received = true;
 }
 
-static void DrawOnCanvas(Canvas *canvas) {
-  /*
-   * Let's create a simple animation. We use the canvas to draw
-   * pixels. We wait between each step to have a slower animation.
-   */
-  canvas->Fill(0, 0, 55);
+static void Fill(uint8_t* frmBuff, uint8_t red, uint8_t green, uint8_t blue)
+{
+	for(int rows = 0; rows < V_RES; rows++)
+	{
+		for(int cols = 0; cols < H_RES; cols++)
+		{
+			frmBuff[rows][cols][0] = red;
+			frmBuff[rows][cols][1] = blue;
+			frmBuff[rows][cols][2] = green;
+		}
+	}
+}
 
-  int center_x = canvas->width() / 2;
-  int center_y = canvas->height() / 2;
-  float radius_max = canvas->width() / 2;
-  float angle_step = 1.0 / 360;
-  for (float a = 0, r = 0; r < radius_max; a += angle_step, r += angle_step) {
-    if (interrupt_received)
-      return;
-    float dot_x = cos(a * 2 * M_PI) * r;
-    float dot_y = sin(a * 2 * M_PI) * r;
-    canvas->SetPixel(center_x + dot_x, center_y + dot_y,
-                     55, 0, 0);
-     canvas->SetPixel(center_x + dot_x, center_y + dot_y,
-                     0, 55, 0);
-   usleep(1 * 1000);  // wait a little to slow down things.
+static void DrawBufferOnCanvas(Canvas *canvas, uint8_t* frmBuff) {
+  for (int rows = 0; rows < V_RES; rows++)
+  {
+   	for(int cols = 0; cols < H_RES; cols++)
+	{
+		canvas->SetPixel(cols, rows, frmBuff[rows][cols][0], frmBuff[rows][cols][1], frmBuff[rows][cols][2])
+	}
   }
 }
 
 int main(int argc, char *argv[]) {
   RGBMatrix::Options defaults;
   defaults.hardware_mapping = "adafruit-hat";  // or e.g. "adafruit-hat"
-  defaults.rows = 32;
-  defaults.cols = 64;
+  defaults.rows = V_RES;
+  defaults.cols = H_RES;
   defaults.chain_length = 1;
   defaults.parallel = 1;
   //This sets the default brightness.
@@ -64,14 +65,34 @@ int main(int argc, char *argv[]) {
   if (canvas == NULL)
     return 1;
 
+  //Create Frame Buffer
+  uint8_t frmBuff[V_RES][H_RES][NUM_CHANNELS];
+  Fill(frmBuff, 0, 0, 0);
   // It is always good to set up a signal handler to cleanly exit when we
   // receive a CTRL-C for instance. The DrawOnCanvas() routine is looking
   // for that.
   signal(SIGTERM, InterruptHandler);
   signal(SIGINT, InterruptHandler);
 
-  DrawOnCanvas(canvas);    // Using the canvas.
   usleep(1 * 10000000);  // wait a little to slow down things.
+
+  while(!interrupt_received)
+  {
+	//measure time at start
+
+	//Render Frame to local buffer#include <iostream>
+	//Copy Frame to Canvas
+	DrawBufferOnCanvas(canvas, frmBuff);
+	//clear framebuffer
+	Fill(frmBuff, 0, 0, 0);
+	//measure time at end
+
+	//find execution time
+
+	//subtract execution time from target frame period.
+
+	//sleep
+  }
 
   // Animation finished. Shut down the RGB matrix.
   canvas->Clear();
