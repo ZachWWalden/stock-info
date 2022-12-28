@@ -1,43 +1,56 @@
-enum FontStatus
-{
-	FontOutOfRange, FontSuccess, FontPrintCutoff
-};
-/*******************************************************************************
- * Text drawing functions past this point.                                     *
- *******************************************************************************/
+#pragma once
+#include "text-utils.hpp"
+#include "font-4x6.hpp"
+#include "font-5x8.hpp"
+#include "font-7x9.hpp"
+#include "font-9x16.hpp"
+
 /************************************************
  * WriteChar Function - function plots a single *
  * character.                                   *
  ************************************************/
-FontStatus WriteChar(int x0, int y0, unsigned char letter, int color, int backcolor){
-    int x,y,ySize,xSize;
-    unsigned char mask;
-
-    if(letter<0x20||letter>0x7E) // if function is sent a ASCII character it can't print
-        return(FontOutOfRange); // return Out of Range error
-    letter-=0x20;                // subtract unused ASCII characters so variable
-                                 // 'letter' can be used for an arrays value
-
-    for(x=x0;x<(5*tsize)+x0;x+=tsize){           // Please don't try to understand this - just accept it.
-        mask=1;                                  // reset mask variable
-        for(y=y0;y<(8*tsize)+y0;y=y+tsize){      //
-            for(xSize=0;xSize<tsize;xSize++)     //
-                for(ySize=0;ySize<tsize;ySize++) //
-                    PlotPoint(x+xSize,y+ySize,((Dfont[letter][((x-x0)/tsize)] & mask) ? color:backcolor));
-            mask<<=1;                            // shift the mask left 1 bit
-        }
-    }
-    return(FontSuccess);
+FontStatus WriteChar(int x0, int y0, uint8_t letter, Font font, Color color)
+{
+	//Check if the character is off of the screen
+	if(x0 > (this-graphics_mgr->getWidth() - font.width) || y0 > (this->graphics_mgr->getHeight() - font.num_rows))
+	{
+		return FontPrintCutoff;
+	}
+	//from width and row num, find initial shift value.
+	uint8_t shift_val = (font.row_size * 8) - font.width;
+	//set initial x value
+	uint8_t x = x0 + (font.width - 1);
+	//row byte loop
+	for(int row_byte = font.row_size; row_byte >= 0; row_byte--)
+	{
+		//loop through each mask value
+		while(shift_val < 8)
+		{
+			//Draw column
+			for(uint8_t y = y0; y < font.num_rows;y++)
+			{
+				if(((font.font[letter + row_byte + ((y - y0) * font.row_size)] >> shift_val) & 0x01) == 0x01)
+				{
+					this->graphics_mgr->PlotPoint(x,y,color);
+				}
+			}
+			shift_val++;
+			x--;
+		}
+		shift_val = 0;
+	}
+	return FontSuccess;
 }
 /************************************************
- * WriteChar Function - function plots a string *
+ * WriteString Function - function plots a string *
  ************************************************/
-FontStatus WriteString(int x0, int y0, char *string, int color, int backcolor){
+FontStatus WriteString(int x0, int y0, char *string, Font font, Color color){
     FontStatus error_code=FontSuccess;
+    uint8_t txwrap = 0;
 
     while(*string) // will loop until NULL is reached (0x00)
     {
-        error_code=WriteChar(x0, y0, *string, color, backcolor); // write the current character to the screen
+        error_code=WriteChar(x0, y0, *string, font, color); // write the current character to the screen
 
         if(error_code!=FontSuccess) // if WriteChar returns an error
             return(error_code);      // stop and return it to the user

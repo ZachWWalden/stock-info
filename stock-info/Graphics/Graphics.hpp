@@ -1,19 +1,56 @@
 #pragma once
-#include "stdint.hpp"
+#include "stdint.h"
+#include "led-matrix.h"
 
-void BlendPixels(int y, int x, uint8_t* result, uint8_t* buf_one, uint8_t* buf_two, uint8_t alpha_one, uint8_t alpha_two)
+using rgb_matrix::Canvas;
+
+struct Color
 {
-	result[y][x][0] = ((((uint16_t)buf_one[y][x][0] * alpha_one)/255) + ((uint16_t)buf_two[y][x][0] * alpha_two)/255);
-	result[y][x][1] = ((((uint16_t)buf_one[y][x][1] * alpha_one)/255) + ((uint16_t)buf_two[y][x][1] * alpha_two)/255);
-	result[y][x][2] = ((((uint16_t)buf_one[y][x][2] * alpha_one)/255) + ((uint16_t)buf_two[y][x][2] * alpha_two)/255);
-}
-void BlendBuffers(int v_res, int h_res, uint8_t* result, uint8_t* buf_one, uint8_t* buf_two, uint8_t alpha_one, uint8_t alpha_two)
-{
-	for(int rows = 0; rows < v_res; rows++)
+	uint8_t alpha;
+	uint8_t red;
+	uint8_t green;
+	uint8_t blue;
+
+	Color()
 	{
-		for(int cols = 0; cols < h_res; cols++)
-		{
-			BlendPixels(rows, cols, result, buf_one, buf_two, alpha_one, alpha_two);
-		}
+
 	}
-}
+	Color(uint8_t a, uint8_t r, uint8_t g, uint8_t b)
+	{
+		Color();
+		alpha = a;
+		red = r;
+		green = g;
+		blue = b;
+	}
+};
+
+class Graphics
+{
+	//attributes
+	public:
+
+	private:
+		Canvas* canvas;
+		uint8_t height;
+		uint8_t width;
+		uint8_t*** render_target = nullptr;
+	//methods
+	public:
+		Graphics(Canvas* canvas, uint8_t height, uint8_t width);
+		~Graphics();
+
+		void draw(uint8_t*** buffer);
+
+		static void PlotPoint(uint8_t x, uint8_t y, Color color);
+		static void BlendPixels(int y, int x, uint8_t*** result, uint8_t*** buf_one, uint8_t*** buf_two, uint8_t alpha_one, uint8_t alpha_two);
+		static void BlendBuffers(int v_res, int h_res, uint8_t*** result, uint8_t*** buf_one, uint8_t*** buf_two, uint8_t alpha_one, uint8_t alpha_two);
+
+		uint8_t getHeight();
+		void setHeight(uint8_t height);
+
+		uint8_t getWidth();
+		void setWidth(uint8_t width);
+	private:
+		void SetCanvasPixel(uint8_t x, uint8_t y, Color color);
+};
