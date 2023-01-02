@@ -1,9 +1,9 @@
 /*==================================================================================
- *Class -
+ *Class - Scene
  *Author - Zach Walden
- *Created -
- *Last Changed -
- *Description -
+ *Created - 1/1/23
+ *Last Changed - 1/1/23
+ *Description - Contains the data to render a scene to a target buffer. Also contains
 ====================================================================================*/
 
 /*
@@ -33,7 +33,76 @@
 
 #include "CHANGE.hpp"
 
+Scene::Scene(uint8_t height, uint8_t width, uint8_t num_channels)
+{
+	this->height = height;
+	this->width = width;
+	this->num_channels = num_channels;
+	//Use new data to allocate memory
+}
+~Scene()
+{
+	//Free Dynamically allocated buffer
+}
+void Scene::draw()
+{
 
+}
+bool Scene::addElement(SceneElement element)
+{
+
+}
+uint8_t Scene::getHeight()
+{
+	return this->height;
+}
+void Scene::setHeight(uint8_t height)
+{
+	this->height = height;
+}
+uint8_t Scene::getWidth()
+{
+	return this->width;
+}
+void Scene::setWidth(uint8_t width)
+{
+	this->width = width;
+}
+uint8_t*** Scene::getBuffer()
+{
+	return this->buffer;
+}
+std::vector* Scene::getElements()
+{
+	return &(this->elements);
+}
+void Scene::HandleEvent(SceneEvent event)
+{
+	if(this->state == Unused)
+	{
+		if(event == BeginTransition)
+		{
+			this->state=TransitionIn;
+			this ->transparency = 0;
+		}
+	}
+	else if(this->state == TransitionIn)
+	{
+		if(event == EndTransition
+	}
+	else if(this->state == TransitionOut)
+	{
+
+	}
+	else if(this->state ++ Focused)
+	{
+
+	}
+}
+uint8_t Scene::getTransparency()
+{
+	return this->transparency;
+}
 
 
 

@@ -29,7 +29,33 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  */
 
+#pragma once
+#include "stdint.h"
+#include <vector>
 
+struct SceneElement
+{
+	uint8_t x;
+	uint8_t y;
+	char* string = nullptr;
+	Sprite* sprite = nullptr;
+
+	SceneElement(uint8_t x_coord, uint8_t y_coord)
+	{
+		x = x_coord;
+		y = y_coord;
+	}
+};
+
+//State Declarations
+enum SceneState
+{
+	Focused, TransitionIn, TransitionOut, Unused
+};
+enum SceneEvent
+{
+	BeginTransition, EndTransition, MaintainState
+};
 
 class Scene
 {
@@ -37,15 +63,41 @@ class Scene
 public:
 
 private:
-	uint8_t* sceneBuffer;
-	char** stockTicker;
-	uint8_t numStrings = 0;
+	uint8_t height;
+	uint8_t width;
+	uint8_t num_channels;
+	uint8_t*** buffer;
+	std::vector<SceneElement> elements;
+
+	//State
+	SceneState state = Unused;
+
+	//State vairables
+	uint8_t transition_rate = 17;
+	uint8_t transparency = 0;
 	//Methods
 public:
-	Scene();
+	Scene(uint8_t height, uint8_t width, uint8_t num_channels);
 	~Scene();
-	
-	virtual void draw() = 0;
+
+	void draw();
+	bool addElement(SceneElement element);
+
+	//Getters/Setters
+	uint8_t getHeight();
+	void setHeight(uint8_t height);
+
+	uint8_t getWidth();
+	void setWidth(uint8_t width);
+
+	uint8_t*** getBuffer();
+
+	std::vector* getElements();
+
+	//State Methods.
+	void HandleEvent(SceneEvent event);
+
+	uint8_t getTransparency();
 private:
 };
 
