@@ -4,15 +4,14 @@
 //
 // This code is public domain
 // (but note, that the led-matrix library this depends on is GPL v2)
-
-#include "led-matrix.h"
-
+#pragma once
 #include <unistd.h>
 #include <math.h>
 #include <stdio.h>
 #include <signal.h>
 
-#include <kernel.h>
+#include "Text/Text.hpp"
+#include "Graphics/Graphics.hpp"
 
 using rgb_matrix::RGBMatrix;
 using rgb_matrix::Canvas;
@@ -40,15 +39,6 @@ static void Fill(uint8_t* frmBuff, uint8_t red, uint8_t green, uint8_t blue)
 	}
 }
 
-static void DrawBufferOnCanvas(Canvas *canvas, uint8_t* frmBuff) {
-  for (int rows = 0; rows < V_RES; rows++)
-  {
-   	for(int cols = 0; cols < H_RES; cols++)
-	{
-		canvas->SetPixel(cols, rows, frmBuff[rows][cols][0], frmBuff[rows][cols][1], frmBuff[rows][cols][2])
-	}
-  }
-}
 
 int main(int argc, char *argv[]) {
   RGBMatrix::Options defaults;
@@ -74,15 +64,22 @@ int main(int argc, char *argv[]) {
   signal(SIGTERM, InterruptHandler);
   signal(SIGINT, InterruptHandler);
 
-  usleep(1 * 10000000);  // wait a little to slow down things.
+  Graphics grapics_mgr(canvas, V_RES, H_RES);
+  grapics_mgr.setRenderTarget(frmBuff);
+  Text text_mgr(&grapics_mgr);
+  Font render_font = text_mgr.fontFactory(Font9x16);
+  char test_string[] = "Hello World";
+  ZwGraphics::Color render_color(255, 0, 0, 0);
 
   while(!interrupt_received)
   {
 	//measure time at start
 
-	//Render Frame to local buffer#include <iostream>
-	//Copy Frame to Canvas
-	DrawBufferOnCanvas(canvas, frmBuff);
+	render_color.red++;
+	render_color.green++;
+	render_color.blue++
+	//draw string
+	text_mgr.WriteString(0,0,test_string,render_font, render_color)
 	//clear framebuffer
 	Fill(frmBuff, 0, 0, 0);
 	//measure time at end
@@ -92,6 +89,7 @@ int main(int argc, char *argv[]) {
 	//subtract execution time from target frame period.
 
 	//sleep
+	usleep(1*1000);
   }
 
   // Animation finished. Shut down the RGB matrix.

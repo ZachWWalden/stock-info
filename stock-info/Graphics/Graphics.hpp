@@ -1,9 +1,11 @@
 #pragma once
 #include "stdint.h"
 #include "led-matrix.h"
+#include "Sprite/Sprite.hpp"
 
 using rgb_matrix::Canvas;
 
+namespace ZwGraphics(
 struct Color
 {
 	uint8_t alpha;
@@ -24,6 +26,7 @@ struct Color
 		blue = b;
 	}
 };
+}
 
 class Graphics
 {
@@ -42,7 +45,7 @@ class Graphics
 
 		void draw();
 
-		void renderSprite(uint8_t x0, uint8_t y0, Sprite sprite);
+		//void renderSprite(uint8_t x0, uint8_t y0, Sprite sprite);
 
 		void PlotPoint(uint8_t x, uint8_t y, Color color);
 		void BlendPixels(int y, int x, uint8_t*** buf_one, uint8_t*** buf_two, uint8_t alpha_one, uint8_t alpha_two);
@@ -55,6 +58,7 @@ class Graphics
 		void setWidth(uint8_t width);
 
 		void setRenderTarget(uint8_t*** render_target);
+		void clearRenderTarget();
 	private:
 		void SetCanvasPixel(uint8_t x, uint8_t y, Color color);
 };

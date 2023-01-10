@@ -1,7 +1,7 @@
 #pragma once
 #include "Text.hpp"
 #include "stdint.h"
-Text::uint8_t console_font_7x9[] = {
+uint8_t Text::console_font_7x9[] = {
 
     /*
      * code=0, hex=0x00, ascii="^@"

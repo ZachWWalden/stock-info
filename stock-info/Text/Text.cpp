@@ -1,5 +1,19 @@
 #pragma once
 #include "Text.hpp"
+Text::Text()
+{
+
+}
+
+Text::Text(Graphics* graphics_mgr)
+{
+	this->graphics_mgr = graphics_mgr;
+}
+
+Text::~Text()
+{
+
+}
 
 /************************************************
  * WriteChar Function - function plots a single *
@@ -57,4 +71,17 @@ FontStatus Text::WriteString(int x0, int y0, char *string, Font font, Color colo
         x0++;                              // increment x axis to make room for line just plotted
     }
     return(FontSuccess); // return success code
+}
+
+
+Font Text::fontFactory(Fonts font_name)
+{
+	switch (font_name)
+	{
+		case Font4x6 : return Font(6, 1, 4, this->console_font_4x6);
+		case Font5x8 : return Font(8, 1, 5, this->console_font_5x8);
+		case Font7x9 : return Font(9, 1, 7, this->console_font_7x9);
+		case Font9x16 : return Font(16, 2, 9, this->console_font_9x16);
+		case default : return Font(0,0,0,nullptr);
+	}
 }

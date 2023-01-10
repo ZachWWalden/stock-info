@@ -7,6 +7,10 @@ Graphics::Graphics(Canvas* canvas, uint8_t height, uint8_t width)
 		this->height = height;
 		this->width = width;
 }
+Graphics::~Graphics()
+{
+
+}
 
 void Graphics::draw()
 {
@@ -40,7 +44,7 @@ void Graphics::BlendBuffers(int v_res, int h_res, uint8_t*** buf_one, uint8_t***
 {
 	if(buf_one == nullptr || buf_two == nullptr)
 	{
-		return
+		return;
 	}
 	for(int rows = 0; rows < v_res; rows++)
 	{
@@ -81,4 +85,17 @@ void Graphics::setRenderTarget(uint8_t*** render_target)
 	}
 
 	this->render_target = render_target;
+}
+
+void Graphics::clearRenderTarget()
+{
+	for(int y = 0; y < this->getHeight(); y++)
+	{
+		for(int x = 0; x < this->getWidth(); x++)
+		{
+			this->render_target[y][x][0] = 0;
+			this->render_target[y][x][1] = 0;
+			this->render_target[y][x][2] = 0;
+		}
+	}
 }
