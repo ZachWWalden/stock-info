@@ -40,17 +40,21 @@ class Graphics
 		Graphics(Canvas* canvas, uint8_t height, uint8_t width);
 		~Graphics();
 
-		void draw(uint8_t*** buffer);
+		void draw();
 
-		static void PlotPoint(uint8_t x, uint8_t y, Color color);
-		static void BlendPixels(int y, int x, uint8_t*** result, uint8_t*** buf_one, uint8_t*** buf_two, uint8_t alpha_one, uint8_t alpha_two);
-		static void BlendBuffers(int v_res, int h_res, uint8_t*** result, uint8_t*** buf_one, uint8_t*** buf_two, uint8_t alpha_one, uint8_t alpha_two);
+		void renderSprite(uint8_t x0, uint8_t y0, Sprite sprite);
+
+		void PlotPoint(uint8_t x, uint8_t y, Color color);
+		void BlendPixels(int y, int x, uint8_t*** buf_one, uint8_t*** buf_two, uint8_t alpha_one, uint8_t alpha_two);
+		void BlendBuffers(int v_res, int h_res, uint8_t*** buf_one, uint8_t*** buf_two, uint8_t alpha_one, uint8_t alpha_two);
 
 		uint8_t getHeight();
 		void setHeight(uint8_t height);
 
 		uint8_t getWidth();
 		void setWidth(uint8_t width);
+
+		void setRenderTarget(uint8_t*** render_target);
 	private:
 		void SetCanvasPixel(uint8_t x, uint8_t y, Color color);
 };

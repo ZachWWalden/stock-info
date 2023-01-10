@@ -8,41 +8,45 @@ Graphics::Graphics(Canvas* canvas, uint8_t height, uint8_t width)
 		this->width = width;
 }
 
-void Graphics::draw(uint8_t*** buffer)
+void Graphics::draw()
 {
 	for(int rows = 0; rows < this->height; rows++)
 	{
 		for(int cols = 0; cols < this->width; cols++)
 		{
-			this->SetCanvasPixel(cols, rows, Color(0xFF, buffer[rows][cols][0], buffer[rows][cols][1], buffer[rows][cols][2]));
+			this->SetCanvasPixel(cols, rows, Color(0xFF, this->render_target[rows][cols][0], this->render_target[rows][cols][1], this->render_target[rows][cols][2]));
 		}
 	}
 }
 
-void Graphics::PlotPoint(uint8_t x, uint8_t y, Color color, uint8_t*** buffer)
+void Graphics::PlotPoint(uint8_t x, uint8_t y, Color color)
 {
-	if(x >= this->width || y >= height || buffer == nullptr)
+	if(x >= this->width || y >= height || this->render_target == nullptr)
 		return;
 
-	//Plot point into buffer
-	buffer[y][x][0] = color.red;
-	buffer[y][x][1] = color.green;
-	buffer[y][x][2] = color.blue;
+	//Plot point into this->render_target
+	this->render_target[y][x][0] = color.red;
+	this->render_target[y][x][1] = color.green;
+	this->render_target[y][x][2] = color.blue;
 }
 
-void Graphics::BlendPixels(int y, int x, uint8_t*** result, uint8_t*** buf_one, uint8_t*** buf_two, uint8_t alpha_one, uint8_t alpha_two)
+void Graphics::BlendPixels(int y, int x, uint8_t*** buf_one, uint8_t*** buf_two, uint8_t alpha_one, uint8_t alpha_two)
 {
-	result[y][x][0] = ((((uint16_t)buf_one[y][x][0] * alpha_one)/255) + ((uint16_t)buf_two[y][x][0] * alpha_two)/255);
-	result[y][x][1] = ((((uint16_t)buf_one[y][x][1] * alpha_one)/255) + ((uint16_t)buf_two[y][x][1] * alpha_two)/255);
-	result[y][x][2] = ((((uint16_t)buf_one[y][x][2] * alpha_one)/255) + ((uint16_t)buf_two[y][x][2] * alpha_two)/255);
+	this->render_target[y][x][0] = ((((uint16_t)buf_one[y][x][0] * alpha_one)/255) + ((uint16_t)buf_two[y][x][0] * alpha_two)/255);
+	this->render_target[y][x][1] = ((((uint16_t)buf_one[y][x][1] * alpha_one)/255) + ((uint16_t)buf_two[y][x][1] * alpha_two)/255);
+	this->render_target[y][x][2] = ((((uint16_t)buf_one[y][x][2] * alpha_one)/255) + ((uint16_t)buf_two[y][x][2] * alpha_two)/255);
 }
-void Graphics::BlendBuffers(int v_res, int h_res, uint8_t*** result, uint8_t*** buf_one, uint8_t*** buf_two, uint8_t alpha_one, uint8_t alpha_two)
+void Graphics::BlendBuffers(int v_res, int h_res, uint8_t*** buf_one, uint8_t*** buf_two, uint8_t alpha_one, uint8_t alpha_two)
 {
+	if(buf_one == nullptr || buf_two == nullptr)
+	{
+		return
+	}
 	for(int rows = 0; rows < v_res; rows++)
 	{
 		for(int cols = 0; cols < h_res; cols++)
 		{
-			BlendPixels(rows, cols, result, buf_one, buf_two, alpha_one, alpha_two);
+			BlendPixels(rows, cols, buf_one, buf_two, alpha_one, alpha_two);
 		}
 	}
 }
@@ -67,4 +71,14 @@ void Graphics::setWidth(uint8_t width)
 void Graphics::SetCanvasPixel(uint8_t x, uint8_t y, Color color)
 {
 	this->canvas->SetPixel(x, y, color.red, color.blue, color.green);
+}
+
+void Graphics::setRenderTarget(uint8_t*** render_target)
+{
+	if(render_target == nullptr)
+	{
+		return;
+	}
+
+	this->render_target = render_target;
 }
