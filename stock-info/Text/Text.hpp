@@ -21,7 +21,7 @@ enum Fonts
 	{
 		num_rows = rows;
 		row_size = row_byte_num;
-		cols = width;
+		width = cols;
 		font = fontAddr;
 	}
 };
@@ -45,9 +45,10 @@ class Text
 		Text(Graphics* graphics_mgr);
 		~Text();
 
-		FontStatus WriteChar(int x0, int y0, uint8_t letter, Font font, Color color);
-		FontStatus WriteString(int x0, int y0, char *string, Font font, Color color);
+		FontStatus WriteChar(int x0, int y0, uint8_t letter, Font font, ZwGraphics::Color color);
+		FontStatus WriteString(int x0, int y0, char *string, Font font, ZwGraphics::Color color);
 
 		Font fontFactory(Fonts font_name);
 	private:
+
 };

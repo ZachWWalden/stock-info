@@ -4,7 +4,6 @@
 //
 // This code is public domain
 // (but note, that the led-matrix library this depends on is GPL v2)
-#pragma once
 #include <unistd.h>
 #include <math.h>
 #include <stdio.h>
@@ -12,7 +11,7 @@
 
 #include "Text/Text.hpp"
 #include "Graphics/Graphics.hpp"
-
+#include "stdint.h"
 using rgb_matrix::RGBMatrix;
 using rgb_matrix::Canvas;
 
@@ -25,7 +24,7 @@ volatile bool interrupt_received = false;
 static void InterruptHandler(int signo) {
   interrupt_received = true;
 }
-
+/*
 static void Fill(uint8_t* frmBuff, uint8_t red, uint8_t green, uint8_t blue)
 {
 	for(int rows = 0; rows < V_RES; rows++)
@@ -38,7 +37,7 @@ static void Fill(uint8_t* frmBuff, uint8_t red, uint8_t green, uint8_t blue)
 		}
 	}
 }
-
+*/
 
 int main(int argc, char *argv[]) {
   RGBMatrix::Options defaults;
@@ -57,16 +56,15 @@ int main(int argc, char *argv[]) {
 
   //Create Frame Buffer
   uint8_t frmBuff[V_RES][H_RES][NUM_CHANNELS];
-  Fill(frmBuff, 0, 0, 0);
   // It is always good to set up a signal handler to cleanly exit when we
   // receive a CTRL-C for instance. The DrawOnCanvas() routine is looking
   // for that.
   signal(SIGTERM, InterruptHandler);
   signal(SIGINT, InterruptHandler);
 
-  Graphics grapics_mgr(canvas, V_RES, H_RES);
-  grapics_mgr.setRenderTarget(frmBuff);
-  Text text_mgr(&grapics_mgr);
+  Graphics graphics_mgr(canvas, V_RES, H_RES);
+  graphics_mgr.setRenderTarget((uint8_t***)frmBuff);
+  Text text_mgr(&graphics_mgr);
   Font render_font = text_mgr.fontFactory(Font9x16);
   char test_string[] = "Hello World";
   ZwGraphics::Color render_color(255, 0, 0, 0);
@@ -74,14 +72,13 @@ int main(int argc, char *argv[]) {
   while(!interrupt_received)
   {
 	//measure time at start
-
+	graphics_mgr.clearRenderTarget();
+	text_mgr.WriteString(0,0,test_string,render_font, render_color);
 	render_color.red++;
 	render_color.green++;
-	render_color.blue++
+	render_color.blue++;
 	//draw string
-	text_mgr.WriteString(0,0,test_string,render_font, render_color)
 	//clear framebuffer
-	Fill(frmBuff, 0, 0, 0);
 	//measure time at end
 
 	//find execution time

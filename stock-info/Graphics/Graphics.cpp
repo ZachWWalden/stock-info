@@ -18,12 +18,12 @@ void Graphics::draw()
 	{
 		for(int cols = 0; cols < this->width; cols++)
 		{
-			this->SetCanvasPixel(cols, rows, Color(0xFF, this->render_target[rows][cols][0], this->render_target[rows][cols][1], this->render_target[rows][cols][2]));
+			this->SetCanvasPixel(cols, rows, ZwGraphics::Color(0xFF, this->render_target[rows][cols][0], this->render_target[rows][cols][1], this->render_target[rows][cols][2]));
 		}
 	}
 }
 
-void Graphics::PlotPoint(uint8_t x, uint8_t y, Color color)
+void Graphics::PlotPoint(uint8_t x, uint8_t y, ZwGraphics::Color color)
 {
 	if(x >= this->width || y >= height || this->render_target == nullptr)
 		return;
@@ -72,7 +72,7 @@ void Graphics::setWidth(uint8_t width)
 	this->width = width;
 }
 
-void Graphics::SetCanvasPixel(uint8_t x, uint8_t y, Color color)
+void Graphics::SetCanvasPixel(uint8_t x, uint8_t y, ZwGraphics::Color color)
 {
 	this->canvas->SetPixel(x, y, color.red, color.blue, color.green);
 }

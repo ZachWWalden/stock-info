@@ -5,7 +5,7 @@
 
 using rgb_matrix::Canvas;
 
-namespace ZwGraphics(
+namespace ZwGraphics{
 struct Color
 {
 	uint8_t alpha;
@@ -47,7 +47,7 @@ class Graphics
 
 		//void renderSprite(uint8_t x0, uint8_t y0, Sprite sprite);
 
-		void PlotPoint(uint8_t x, uint8_t y, Color color);
+		void PlotPoint(uint8_t x, uint8_t y, ZwGraphics::Color color);
 		void BlendPixels(int y, int x, uint8_t*** buf_one, uint8_t*** buf_two, uint8_t alpha_one, uint8_t alpha_two);
 		void BlendBuffers(int v_res, int h_res, uint8_t*** buf_one, uint8_t*** buf_two, uint8_t alpha_one, uint8_t alpha_two);
 
@@ -60,5 +60,5 @@ class Graphics
 		void setRenderTarget(uint8_t*** render_target);
 		void clearRenderTarget();
 	private:
-		void SetCanvasPixel(uint8_t x, uint8_t y, Color color);
+		void SetCanvasPixel(uint8_t x, uint8_t y, ZwGraphics::Color color);
 };

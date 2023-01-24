@@ -19,10 +19,10 @@ Text::~Text()
  * WriteChar Function - function plots a single *
  * character.                                   *
  ************************************************/
-FontStatus Text::WriteChar(int x0, int y0, uint8_t letter, Font font, Color color)
+FontStatus Text::WriteChar(int x0, int y0, uint8_t letter, Font font, ZwGraphics::Color color)
 {
 	//Check if the character is off of the screen
-	if(x0 > (this-graphics_mgr->getWidth() - font.width) || y0 > (this->graphics_mgr->getHeight() - font.num_rows))
+	if(x0 > (this->graphics_mgr->getWidth() - font.width) || y0 > (this->graphics_mgr->getHeight() - font.num_rows))
 	{
 		return FontPrintCutoff;
 	}
@@ -54,7 +54,7 @@ FontStatus Text::WriteChar(int x0, int y0, uint8_t letter, Font font, Color colo
 /************************************************
  * WriteString Function - function plots a string *
  ************************************************/
-FontStatus Text::WriteString(int x0, int y0, char *string, Font font, Color color){
+FontStatus Text::WriteString(int x0, int y0, char *string, Font font, ZwGraphics::Color color){
     FontStatus error_code=FontSuccess;
     uint8_t txwrap = 0;
 
@@ -82,6 +82,6 @@ Font Text::fontFactory(Fonts font_name)
 		case Font5x8 : return Font(8, 1, 5, this->console_font_5x8);
 		case Font7x9 : return Font(9, 1, 7, this->console_font_7x9);
 		case Font9x16 : return Font(16, 2, 9, this->console_font_9x16);
-		case default : return Font(0,0,0,nullptr);
+		default : return Font(0,0,0,nullptr);
 	}
 }
