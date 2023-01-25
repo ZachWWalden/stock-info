@@ -113,7 +113,7 @@ int main(int argc, char *argv[]) {
 	text_mgr.WriteString(0,0,test_string,render_font, render_color);
 	graphics_mgr.draw();
 	render_color.red++;
-	render_color.green++;
+	render_color.green--;
 	render_color.blue++;
 	//draw string
 	//clear framebuffer
