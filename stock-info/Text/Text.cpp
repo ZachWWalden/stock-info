@@ -34,13 +34,13 @@ FontStatus Text::WriteChar(int x0, int y0, uint8_t letter, Font font, ZwGraphics
 	//set initial x value
 	uint8_t x = x0 + (font.width - 1);
 	//row byte loop
-	for(int row_byte = font.row_size; row_byte >= 0; row_byte--)
+	for(int row_byte = (font.row_size - 1); row_byte >= 0; row_byte--)
 	{
 		//loop through each mask value
 		while(shift_val < 8)
 		{
 			//Draw column
-			for(uint8_t y = y0; y < font.num_rows;y++)
+			for(uint8_t y = y0; (y - (uint8_t)y0) < font.num_rows;y++)
 			{
 				if(((font.font[(letter * font.num_rows*font.row_size) + row_byte + ((y - y0) * font.row_size)] >> shift_val) & 0x01) == 0x01)
 				{
@@ -70,7 +70,6 @@ FontStatus Text::WriteString(int x0, int y0, char *string, Font font, ZwGraphics
         x0 += font.width;                       // increment the x axis to make a spot for the new character
         //PlotVLine(x0,y0,7*tsize,backcolor);// plot a blank line between characters
         string++;                          // increment the current character
-        x0++;                              // increment x axis to make room for line just plotted
     }
     return(FontSuccess); // return success code
 }
