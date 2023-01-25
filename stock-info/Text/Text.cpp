@@ -1,5 +1,7 @@
 #pragma once
 #include "Text.hpp"
+#include <iostream>
+
 Text::Text()
 {
 
@@ -21,6 +23,7 @@ Text::~Text()
  ************************************************/
 FontStatus Text::WriteChar(int x0, int y0, uint8_t letter, Font font, ZwGraphics::Color color)
 {
+	std::cout << (char)letter << "\n";
 	//Check if the character is off of the screen
 	if(x0 > (this->graphics_mgr->getWidth() - font.width) || y0 > (this->graphics_mgr->getHeight() - font.num_rows))
 	{
@@ -39,7 +42,7 @@ FontStatus Text::WriteChar(int x0, int y0, uint8_t letter, Font font, ZwGraphics
 			//Draw column
 			for(uint8_t y = y0; y < font.num_rows;y++)
 			{
-				if(((font.font[letter + row_byte + ((y - y0) * font.row_size)] >> shift_val) & 0x01) == 0x01)
+				if(((font.font[(letter * font.num_rows*font.row_size) + row_byte + ((y - y0) * font.row_size)] >> shift_val) & 0x01) == 0x01)
 				{
 					this->graphics_mgr->PlotPoint(x,y,color);
 				}
@@ -56,7 +59,6 @@ FontStatus Text::WriteChar(int x0, int y0, uint8_t letter, Font font, ZwGraphics
  ************************************************/
 FontStatus Text::WriteString(int x0, int y0, char *string, Font font, ZwGraphics::Color color){
     FontStatus error_code=FontSuccess;
-    uint8_t txwrap = 0;
 
     while(*string) // will loop until NULL is reached (0x00)
     {
