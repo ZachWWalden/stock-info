@@ -24,6 +24,43 @@ volatile bool interrupt_received = false;
 static void InterruptHandler(int signo) {
   interrupt_received = true;
 }
+
+//Allocate Triple Pointer
+template <typename T>
+T*** allocTriplePointer(int y, int x, int depth, T initial_value)
+{
+	T*** ret_value = new T**[y];
+	for(int i = 0; i < y; i++)
+	{
+		ret_value[i] = new T*[x];
+		for(int j = 0; j < x; j++)
+		{
+			ret_value[i][j] = new T[depth];
+			//Initialize values
+			for(int k = 0; k < depth; k++)
+			{
+				ret_value[i][j][k] = initial_value;
+			}
+		}
+	}
+	return ret_value;
+}
+
+//De-Allocate Triple Pointer
+template <typename T>
+void deallocTriplePointer(T*** pointer, int y, int x)
+{
+	for(int i = 0; i < y; i++)
+	{
+		for(int j = 0; j < x; j++)
+		{
+			delete [] pointer[i][j];
+		}
+		delete [] pointer[i];
+	}
+	delete [] pointer;
+}
+
 /*
 static void Fill(uint8_t* frmBuff, uint8_t red, uint8_t green, uint8_t blue)
 {
@@ -55,7 +92,7 @@ int main(int argc, char *argv[]) {
     return 1;
 
   //Create Frame Buffer
-  uint8_t frmBuff[V_RES][H_RES][NUM_CHANNELS];
+  uint8_t*** frmBuff = allocTriplePointer<uint8_t>(V_RES, H_RES, NUM_CHANNELS, (uint8_t)0x00);
   // It is always good to set up a signal handler to cleanly exit when we
   // receive a CTRL-C for instance. The DrawOnCanvas() routine is looking
   // for that.
@@ -63,7 +100,7 @@ int main(int argc, char *argv[]) {
   signal(SIGINT, InterruptHandler);
 
   Graphics graphics_mgr(canvas, V_RES, H_RES);
-  graphics_mgr.setRenderTarget((uint8_t***)frmBuff);
+  graphics_mgr.setRenderTarget(frmBuff);
   Text text_mgr(&graphics_mgr);
   Font render_font = text_mgr.fontFactory(Font9x16);
   char test_string[] = "Hello World";
@@ -92,6 +129,7 @@ int main(int argc, char *argv[]) {
   // Animation finished. Shut down the RGB matrix.
   canvas->Clear();
   delete canvas;
+  deallocTriplePointer(frmBuff, V_RES, H_RES);
 
   return 0;
 }
