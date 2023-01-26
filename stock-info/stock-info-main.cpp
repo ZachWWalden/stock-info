@@ -107,9 +107,9 @@ int main(int argc, char *argv[]) {
   {
 	//measure time at start
 	graphics_mgr.clearRenderTarget();
-	graphics_mgr.PlotCircle(ZwGraphics::Circle(0x09, ZwGraphics::Point(9,9)), render_color);
-	graphics_mgr.PlotCircleFilled(ZwGraphics::Circle(0x09, ZwGraphics::Point(54,20)), render_color);
-	graphics_mgr.PlotLine(ZwGraphics::Point(0,32), ZwGraphics::Point(64, 0), render_color);
+	graphics_mgr.Gradient1D(ZwGraphics::Gradient(ZwGraphics::Color(255, 25, 59, 120), ZwGraphics::Color(255, 200, 59, 200)), ZwGraphics::Rectangle(ZwGraphics::Point(32,0), ZwGraphics::Point(63,31)));
+	graphics_mgr.Gradient2D(ZwGraphics::Gradient(ZwGraphics::Color(255, 25, 59, 120), ZwGraphics::Color(255, 200, 59, 200)), ZwGraphics::Gradient(ZwGraphics::Color(255, 0,0,0), ZwGraphics::Color(255,0,255,0)), ZwGraphics::Rectangle(ZwGraphics::Point(0,0), ZwGraphics::Point(31,31)));
+	graphics_mgr.PlotTriangle(ZwGraphics::Triangle(ZwGraphics::Point(25,9), ZwGraphics::Point(33, 25), ZwGraphics::Point(47,5)), render_color);
 	graphics_mgr.draw();
 	render_color.red++;
 	render_color.green++;

@@ -25,6 +25,10 @@ struct Color
 		green = g;
 		blue = b;
 	}
+	Color invert()
+	{
+		return Color(alpha, ~red, ~blue, ~green);
+	}
 };
 
 struct Point
@@ -54,6 +58,18 @@ struct Rectangle
 	}
 };
 
+struct Triangle
+{
+	Point p1;
+	Point p2;
+	Point p3;
+	Triangle(Point new_p1, Point new_p2, Point new_p3)
+	{
+		p1 = new_p1;
+		p2 = new_p2;
+		p3 = new_p3;
+	}
+};
 
 struct Circle
 {
@@ -65,6 +81,18 @@ struct Circle
 		radius = new_radius;
 	}
 };
+
+struct Gradient
+{
+	Color start;
+	Color end;
+	Gradient(Color start_color, Color end_color)
+	{
+		start = start_color;
+		end = end_color;
+	}
+};
+
 }
 
 class Graphics
@@ -89,17 +117,24 @@ class Graphics
 		void PlotPoint(uint8_t x, uint8_t y, ZwGraphics::Color color);
 
 		void PlotPoint(ZwGraphics::Point point, ZwGraphics::Color color);
+
 		void PlotLine(ZwGraphics::Point p1,ZwGraphics::Point p2, ZwGraphics::Color color);
 		void PlotLineHorizontal(ZwGraphics::Point p1,ZwGraphics::Point p2, ZwGraphics::Color color);
 		void PlotLineVertical(ZwGraphics::Point p1,ZwGraphics::Point p2, ZwGraphics::Color color);
 
 		void PlotRectangle(ZwGraphics::Rectangle rect,ZwGraphics::Color color);
 		void PlotRectangleFilled(ZwGraphics::Rectangle rect,ZwGraphics::Color color);
+
+		void PlotTriangle(ZwGraphics::Triangle, ZwGraphics::Color color);
+		void PlotTriangleFilled(ZwGraphics::Triangle, ZwGraphics::Color color);
+
 		void PlotCircle(ZwGraphics::Circle circle, ZwGraphics::Color color);
 		void PlotCircleFilled(ZwGraphics::Circle circle, ZwGraphics::Color color);
 
 		void BlendPixels(int y, int x, uint8_t*** buf_one, uint8_t*** buf_two, uint8_t alpha_one, uint8_t alpha_two);
 		void BlendBuffers(int v_res, int h_res, uint8_t*** buf_one, uint8_t*** buf_two, uint8_t alpha_one, uint8_t alpha_two);
+		void Gradient1D(ZwGraphics::Gradient grad, ZwGraphics::Rectangle rect);
+		void Gradient2D(ZwGraphics::Gradient grad_left_right, ZwGraphics::Gradient grad_top_bot, ZwGraphics::Rectangle rect);
 
 		uint8_t getHeight();
 		void setHeight(uint8_t height);
@@ -115,4 +150,8 @@ class Graphics
 		void PlotLineLow(ZwGraphics::Point p1,ZwGraphics::Point p2, ZwGraphics::Color color);
 
 		void SetCanvasPixel(uint8_t x, uint8_t y, ZwGraphics::Color color);
+
+		bool isPointOnScreen(ZwGraphics::Point pt);
+
+		uint8_t sadd8(uint8_t a, uint8_t b);
 };
