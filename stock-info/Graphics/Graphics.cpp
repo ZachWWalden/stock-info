@@ -252,7 +252,7 @@ void Graphics::PlotRectangleFilled(ZwGraphics::Rectangle rect,ZwGraphics::Color 
 void Graphics::PlotTriangle(ZwGraphics::Triangle tri, ZwGraphics::Color color)
 {
 	//Check that all point are with the screen
-	if(this->isPointOnScreen(tri.p1) && this->isPointOnScreen(tri.p2) && this->isPointOnScreen(tri.p3))
+	if(!this->isPointOnScreen(tri.p1) && !this->isPointOnScreen(tri.p2) && !this->isPointOnScreen(tri.p3))
 		return;
 
 	this->PlotLine(tri.p1, tri.p2, color);
@@ -354,7 +354,7 @@ void Graphics::PlotCircleFilled(ZwGraphics::Circle circle, ZwGraphics::Color col
 void Graphics::Gradient1D(ZwGraphics::Gradient grad, ZwGraphics::Rectangle rect)
 {
 	//Ensure gradient window is contained by the screen
-	if(this->isPointOnScreen(rect.p_top_left) || this->isPointOnScreen(rect.p_bot_right))
+	if(!this->isPointOnScreen(rect.p_top_left) || !this->isPointOnScreen(rect.p_bot_right))
 		return;
 	ZwGraphics::Color color = grad.start;
 
@@ -377,7 +377,7 @@ void Graphics::Gradient1D(ZwGraphics::Gradient grad, ZwGraphics::Rectangle rect)
 void Graphics::Gradient2D(ZwGraphics::Gradient grad_left_right, ZwGraphics::Gradient grad_top_bot, ZwGraphics::Rectangle rect)
 {
 	//Ensure gradient window is contained by the screen
-	if(this->isPointOnScreen(rect.p_top_left) || this->isPointOnScreen(rect.p_bot_right))
+	if(!this->isPointOnScreen(rect.p_top_left) || !this->isPointOnScreen(rect.p_bot_right))
 		return;
 	ZwGraphics::Color color = grad_left_right.start;
 	color.red = this->sadd8(color.red, grad_top_bot.start.red);
