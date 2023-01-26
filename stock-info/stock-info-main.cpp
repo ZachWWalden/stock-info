@@ -101,19 +101,18 @@ int main(int argc, char *argv[]) {
 
   Graphics graphics_mgr(canvas, V_RES, H_RES);
   graphics_mgr.setRenderTarget(frmBuff);
-  Text text_mgr(&graphics_mgr);
-  Font render_font = text_mgr.fontFactory(Font9x16);
-  char test_string[] = "Hello World";
   ZwGraphics::Color render_color(255, 0, 0, 0);
 
   while(!interrupt_received)
   {
 	//measure time at start
 	graphics_mgr.clearRenderTarget();
-	text_mgr.WriteString(0,0,test_string,render_font, render_color);
+	graphics_mgr.PlotCircle(ZwGraphics::Circle(0x09, ZwGraphics::Point(9,9)), render_color);
+	graphics_mgr.PlotCircleFilled(ZwGraphics::Circle(0x09, ZwGraphics::Point(54,20)), render_color);
+	graphics_mgr.PlotLine(ZwGraphics::Point(0,32), ZwGraphics::Point(64, 0), render_color);
 	graphics_mgr.draw();
 	render_color.red++;
-	render_color.green--;
+	render_color.green++;
 	render_color.blue++;
 	//draw string
 	//clear framebuffer
