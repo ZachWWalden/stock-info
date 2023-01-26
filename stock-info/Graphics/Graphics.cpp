@@ -242,35 +242,30 @@ void Graphics::PlotCircle(ZwGraphics::Circle circle, ZwGraphics::Color color)
 	r = circle.radius;
 	x_mid = circle.center.x;
 	y_mid = circle.center.y;
-	x = r;
-	y = 0;
+	x = 0;
+	y = r;
 	err = 3 - (r << 1);
 	//Check for overflow issues
 	if(!(x_mid + r < this->getWidth() && x_mid - r >= 0 && y_mid + r < this->getHeight() && y_mid - r >= 0))
 		return;
 	//Plot the middle points if radius is odd.
-	if((r % 2) != 0)
-	{
-		this->PlotPoint(ZwGraphics::Point(x_mid, y_mid + r), color);
-		this->PlotPoint(ZwGraphics::Point(x_mid, y_mid - r), color);
-		this->PlotPoint(ZwGraphics::Point(x_mid + r, y_mid), color);
-		this->PlotPoint(ZwGraphics::Point(x_mid - r, y_mid), color);
-		y++;
-	}
+	this->PlotPoint(ZwGraphics::Point(x_mid, y_mid + r), color);
+	this->PlotPoint(ZwGraphics::Point(x_mid, y_mid - r), color);
+	this->PlotPoint(ZwGraphics::Point(x_mid + r, y_mid), color);
+	this->PlotPoint(ZwGraphics::Point(x_mid - r, y_mid), color);
 
-	while(x >= r >> 1)
+	while(y >= x)
 	{
+		x++;
 		if(err > 0)
 		{
-			err += (5 - (x << 1) + (y << 1)) << 1;
-			x--;
+			err += ((x - y) << 2) + 10;
+			y--;
 		}
 		else
 		{
-			err += (3 + (y << 1)) << 1;
+			err += (x << 2) + 6;
 		}
-
-		y++;
 		//Plot the points
 		this->PlotPoint(ZwGraphics::Point(x_mid + x,y_mid + y), color);
 		this->PlotPoint(ZwGraphics::Point(x_mid + x,y_mid - y), color);
@@ -290,35 +285,30 @@ void Graphics::PlotCircleFilled(ZwGraphics::Circle circle, ZwGraphics::Color col
 	r = circle.radius;
 	x_mid = circle.center.x;
 	y_mid = circle.center.y;
-	x = r;
-	y = 0;
+	x = 0;
+	y = r;
 	err = 3 - (r << 1);
 	//Check for overflow issues
 	if(!(x_mid + r < this->getWidth() && x_mid - r >= 0 && y_mid + r < this->getHeight() && y_mid - r >= 0))
 		return;
 	//Plot the middle points if radius is odd.
-	if((r % 2) != 0)
-	{
-		this->PlotLine(circle.center, ZwGraphics::Point(x_mid, y_mid + r), color);
-		this->PlotLine(circle.center, ZwGraphics::Point(x_mid, y_mid - r), color);
-		this->PlotLine(circle.center, ZwGraphics::Point(x_mid + r, y_mid), color);
-		this->PlotLine(circle.center, ZwGraphics::Point(x_mid - r, y_mid), color);
-		y++;
-	}
+	this->PlotLine(circle.center, ZwGraphics::Point(x_mid, y_mid + r), color);
+	this->PlotLine(circle.center, ZwGraphics::Point(x_mid, y_mid - r), color);
+	this->PlotLine(circle.center, ZwGraphics::Point(x_mid + r, y_mid), color);
+	this->PlotLine(circle.center, ZwGraphics::Point(x_mid - r, y_mid), color);
 
-	while(x >= r >> 1)
+	while(y >= x)
 	{
+		x++;
 		if(err > 0)
 		{
-			err += (5 - (x << 1) + (y << 1)) << 1;
-			x--;
+			err += ((x - y) << 2) + 10;
+			y--;
 		}
 		else
 		{
-			err += (3 + (y << 1)) << 1;
+			err += (x << 2) + 6;
 		}
-
-		y++;
 		//Plot the points
 		this->PlotLine(circle.center, ZwGraphics::Point(x_mid + x,y_mid + y), color);
 		this->PlotLine(circle.center, ZwGraphics::Point(x_mid + x,y_mid - y), color);
