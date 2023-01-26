@@ -94,6 +94,7 @@ class Graphics
 		void PlotLineVertical(ZwGraphics::Point p1,ZwGraphics::Point p2, ZwGraphics::Color color);
 
 		void PlotRectangle(ZwGraphics::Rectangle rect,ZwGraphics::Color color);
+		void PlotRectangleFilled(ZwGraphics::Rectangle rect,ZwGraphics::Color color);
 		void PlotCircle(ZwGraphics::Circle circle, ZwGraphics::Color color);
 		void PlotCircleFilled(ZwGraphics::Circle circle, ZwGraphics::Color color);
 

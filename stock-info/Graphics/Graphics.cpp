@@ -235,6 +235,20 @@ void Graphics::PlotRectangle(ZwGraphics::Rectangle rect,ZwGraphics::Color color)
 	this->PlotLineHorizontal(rect.p_top_left, ZwGraphics::Point(rect.p_top_left.x + dx, rect.p_top_left.y), color);
 	this->PlotLineHorizontal(ZwGraphics::Point(rect.p_top_left.x,rect.p_bot_right.y + dy),rect.p_bot_right, color);
 }
+
+void Graphics::PlotRectangleFilled(ZwGraphics::Rectangle rect,ZwGraphics::Color color)
+{
+	uint8_t dx, dy;
+	dx = rect.p_bot_right.x - rect.p_top_left.x;
+	dy = rect.p_bot_right.y - rect.p_top_left.y;
+
+	for(uint8_t i = dx; i >= rect.p_top_left.x; i--)
+	{
+		this->PlotLineVertical(ZwGraphics::Point(rect.p_top_left.x + i, rect.p_top_left.y), ZwGraphics::Point(rect.p_top_left.x + i, rect.p_top_left.y + dy), color);
+	}
+
+}
+
 void Graphics::PlotCircle(ZwGraphics::Circle circle, ZwGraphics::Color color)
 {
 	//only supports circles with odd radii, to support even radii, add 1 to radius, but do not render that midpoint.
