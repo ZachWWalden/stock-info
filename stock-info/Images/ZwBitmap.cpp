@@ -30,7 +30,6 @@
  */
 
 #pragma once
-#include <iostream>
 
 #include "CHANGE.hpp"
 
