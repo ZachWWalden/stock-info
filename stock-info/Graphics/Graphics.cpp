@@ -384,7 +384,7 @@ void Graphics::Gradient2D(ZwGraphics::Gradient grad_left_right, ZwGraphics::Grad
 	color.green = this->sadd8(color.green, grad_top_bot.start.green);
 	color.blue = this->sadd8(color.blue, grad_top_bot.start.blue);
 
-	uint8_t dx, dy, rx_inc, gx_inc, bx_inc, ry_inc, gy_inc, by_inc;
+	uint8_t dx, dy, rx_inc, gx_inc, bx_inc, ry_inc, gy_inc, by_inc, rx_tmp, gx_tmp, bx_tmp;
 	dx = rect.p_bot_right.x - rect.p_top_left.x;
 	dy = rect.p_bot_right.y - rect.p_top_left.y;
 
@@ -392,22 +392,30 @@ void Graphics::Gradient2D(ZwGraphics::Gradient grad_left_right, ZwGraphics::Grad
 	gx_inc = (grad_left_right.end.green - grad_left_right.start.green)/dx;
 	bx_inc = (grad_left_right.end.blue - grad_left_right.start.blue)/dx;
 
+	rx_tmp = grad_left_right.start.red;
+	gx_tmp = grad_left_right.start.green;
+	bx_tmp = grad_left_right.start.blue;
+
 	ry_inc = (grad_top_bot.end.red - grad_top_bot.start.red)/dy;
 	gy_inc = (grad_top_bot.end.green - grad_top_bot.start.green)/dy;
 	by_inc = (grad_top_bot.end.blue - grad_top_bot.start.blue)/dy;
 
 	for(uint8_t i = 0; i <= dx; i++)
 	{
-		for(uint8_t j = 0; j < dy; j++)
+		for(uint8_t j = 0; j <= dy; j++)
 		{
 			this->PlotPoint(rect.p_top_left.x + i, rect.p_top_left.y + j, color);
 			color.red = this->sadd8(color.red, ry_inc);
 			color.green = this->sadd8(color.green, gy_inc);
 			color.blue = this->sadd8(color.blue, by_inc);
 		}
-		color.red = this->sadd8(color.red, rx_inc);
-		color.green = this->sadd8(color.green, gx_inc);
-		color.blue = this->sadd8(color.blue, bx_inc);
+		rx_tmp += rx_inc;
+		gx_tmp += gx_inc;
+		bx_tmp += bx_inc;
+
+		color.red = this->sadd8(rx_tmp, rx_inc);
+		color.green = this->sadd8(gx_tmp, gx_inc);
+		color.blue = this->sadd8(bx_tmp, bx_inc);
 	}
 }
 
