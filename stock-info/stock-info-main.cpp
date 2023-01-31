@@ -8,9 +8,11 @@
 #include <math.h>
 #include <stdio.h>
 #include <signal.h>
+#include <string>
 
 #include "Text/Text.hpp"
 #include "Graphics/Graphics.hpp"
+#include "Graphics/Sprite/Sprite.hpp"
 #include "stdint.h"
 using rgb_matrix::RGBMatrix;
 using rgb_matrix::Canvas;
@@ -101,19 +103,23 @@ int main(int argc, char *argv[]) {
 
   Graphics graphics_mgr(canvas, V_RES, H_RES);
   graphics_mgr.setRenderTarget(frmBuff);
-  ZwGraphics::Color render_color(255, 0, 0, 0);
+  Text text_mgr(&graphics_mgr);
+  Font font916 = text_mgr.fontFactory(Font9x16);
+  Font font79 = text_mgr.fontFactory(Font7x9);
+  char ticker[] = "NFLX";
+  char price[] = "$353.11";
+  ZwGraphics::Color text_color(255, 255, 0, 0);
+  std::string filename = "stocks/nflx.bmp";
+  Sprite nflx(filename, 0, 0);
 
   while(!interrupt_received)
   {
 	//measure time at start
 	graphics_mgr.clearRenderTarget();
-	graphics_mgr.Gradient1D(ZwGraphics::Gradient(ZwGraphics::Color(255, 25, 59, 120), ZwGraphics::Color(255, 200, 59, 200)), ZwGraphics::Rectangle(ZwGraphics::Point(32,0), ZwGraphics::Point(63,31)));
-	graphics_mgr.Gradient2D(ZwGraphics::Gradient(ZwGraphics::Color(255, 25, 59, 120), ZwGraphics::Color(255, 200, 59, 200)), ZwGraphics::Gradient(ZwGraphics::Color(255, 0,0,0), ZwGraphics::Color(255,0,255,0)), ZwGraphics::Rectangle(ZwGraphics::Point(0,0), ZwGraphics::Point(31,31)));
-	graphics_mgr.PlotTriangle(ZwGraphics::Triangle(ZwGraphics::Point(25,9), ZwGraphics::Point(33, 25), ZwGraphics::Point(47,5)), render_color);
+	text_mgr.WriteString(H_RES - 4*9, 0, ticker, font916, text_color);
+	text_mgr.WriteString(H_RES - 7*7, 22, price, font79, text_color);
+	graphics_mgr.PlotSprite(ZwGraphics::Rectangle(ZwGraphics::Point(nflx.getXPosition(),nflx.getYPosition()), ZwGraphics::Point(nflx.getXPosition()+nflx.getWidth(), nflx.getYPosition()+nflx.getHeight())), nflx.getSpriteData());
 	graphics_mgr.draw();
-	render_color.red++;
-	render_color.green++;
-	render_color.blue++;
 	//draw string
 	//clear framebuffer
 	//measure time at end
