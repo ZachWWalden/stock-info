@@ -426,12 +426,12 @@ void Graphics::PlotSprite(ZwGraphics::Rectangle rect, uint8_t*** sprite_data)
 	//Check to see if the Sprite will be on the screen
 	if(!this->isPointOnScreen(rect.p_top_left) || !this->isPointOnScreen(rect.p_bot_right))
 	{
-		LOGV("Sprite does not fit the screen.", "Graphics::PlotSprite()");
+		LOGV("Sprite out of screen.", "Graphics::PlotSprite()");
 		return;
 	}
 	int dx, dy;
-	dx = rect.p_top_left.x - rect.p_bot_right.x;
-	dy = rect.p_top_left.y - rect.p_bot_right.y;
+	dx = rect.p_bot_right.x - rect.p_top_left.x;
+	dy = rect.p_bot_right.y - rect.p_top_left.y;
 
 	for(int y = 0; y <= dy; y++)
 	{
