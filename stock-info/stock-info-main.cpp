@@ -110,7 +110,7 @@ int main(int argc, char *argv[]) {
   char price[] = "$353.11";
   ZwGraphics::Color text_color(255, 255, 0, 0);
   std::string filename = "stocks/nflx.bmp";
-  Sprite nflx(filename, 0, 0);
+  Sprite* nflx = new Sprite(filename, 0, 0);
 
   while(!interrupt_received)
   {
@@ -136,6 +136,7 @@ int main(int argc, char *argv[]) {
   canvas->Clear();
   delete canvas;
   deallocTriplePointer(frmBuff, V_RES, H_RES);
+  delete nflx;
 
   return 0;
 }
