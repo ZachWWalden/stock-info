@@ -1,9 +1,9 @@
 /*==================================================================================
- *Class -
+ *Class - Sprite
  *Author - Zach Walden
- *Created -
- *Last Changed -
- *Description -
+ *Created - 1/30/23
+ *Last Changed - 1/30/23
+ *Description - Sprite, basic wrapper around a bitmap. Abstracts dynamic allocation.
 ====================================================================================*/
 
 /*
@@ -31,28 +31,63 @@
 
 #pragma once
 
-#include "CHANGE.hpp"
+#include "Sprite.hpp"
+#include "../../Logging/Logging.hpp"
 
+Sprite::Sprite()
+{
 
+}
+Sprite::Sprite(std::string filename, uint8_t x, uint8_t y)
+{
+	this->bmp = new ZwBitmap();
+	if(bmp)
+	{
+		this->bmp->readBitmap(filename);
+		this->x = x;
+		this->y = y;
+	}
+	else
+	{
+		LOGV(filename,", Failed to allocate memory for Sprite.");
+	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+}
+Sprite::~Sprite()
+{
+	delete this->bmp;
+}
+uint8_t*** Sprite::getSpriteData()
+{
+	return this->bmp->getData();
+}
+uint32_t Sprite::getHeight()
+{
+	return this->bmp->getHeight();
+}
+uint32_t Sprite::getWidth()
+{
+	return this->bmp->getWidth();
+}
+uint8_t Sprite::getXPosition()
+{
+	return this->x;
+}
+void Sprite::setXPosition(uint8_t x)
+{
+	this->x = x;
+}
+uint8_t Sprite::getYPosition()
+{
+	return this->y;
+}
+void Sprite::setYPosition(uint8_t y)
+{
+	this->y = y;
+}
 
 /*
-<++> CHANGE::<++>()
+<++> Sprite::<++>()
 {
 
 }

@@ -136,6 +136,8 @@ class Graphics
 		void Gradient1D(ZwGraphics::Gradient grad, ZwGraphics::Rectangle rect);
 		void Gradient2D(ZwGraphics::Gradient grad_left_right, ZwGraphics::Gradient grad_top_bot, ZwGraphics::Rectangle rect);
 
+		void PlotSprite(ZwGraphics::Rectangle rect, uint8_t*** sprite_data);
+
 		uint8_t getHeight();
 		void setHeight(uint8_t height);
 

@@ -1,11 +1,3 @@
-/*==================================================================================
- *Class - Sprite
- *Author - Zach Walden
- *Created - 1/30/23
- *Last Changed - 1/30/23
- *Description - Sprite, basic wrapper around a bitmap. Abstracts dynamic allocation.
-====================================================================================*/
-
 /*
  * This program source code file is part of PROJECT_NAME
  *
@@ -29,36 +21,16 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  */
 
-#include <string>
-#include "stdint.h"
+#include <iostream>
 
-#include "../../Images/ZwBitmap.hpp"
+#define DEBUG 1
 
-class Sprite
-{
-	//Attributes
-public:
-
-private:
-	ZwBitmap* bmp;
-	uint8_t x = 0;
-	uint8_t y = 0;
-	//Methods
-public:
-	Sprite();
-	Sprite(std::string filename, uint8_t x, uint8_t y);
-	~Sprite();
-
-	uint8_t*** getSpriteData();
-
-	uint32_t getHeight();
-	uint32_t getWidth();
-
-	uint8_t getXPosition();
-	void setXPosition(uint8_t x);
-
-	uint8_t getYPosition();
-	void setYPosition(uint8_t y);
-
-private:
-};
+#if DEBUG
+#define LOG(x) std::cout << x << std::endl
+#define LOGV(x,y) std::cout << x << ", On:" << y << std::endl
+#define LOG_IO(x,y,z) std::cout << "Error with File:" << x << x << z << std::endl
+#else
+#define LOG(X)
+#define LOGV(x,y)
+#define LOG_IO(x, y, z)
+#endif

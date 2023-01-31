@@ -2,8 +2,8 @@
  *Class - ZwBitmap
  *Author - Zach Walden
  *Created - 1/26/23
- *Last Changed - 1/26/23
- *Description - Reads in bitmap files to
+ *Last Changed - 1/30/23
+ *Description - Reads in bitmap files to 3-d array
 ====================================================================================*/
 
 /*
@@ -29,10 +29,14 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  */
 
+#include <cstdint>
 #include <string>
 #include <iostream>
+#include <fstream>
 #include "stdint.h"
+#include "../Logging/Logging.hpp"
 
+#pragma pack(push,1)
 struct BMPFileHeader {
     uint16_t file_type{0x4D42};          // File type always BM which is 0x4D42
     uint32_t file_size{0};               // Size of the file (in bytes)
@@ -65,14 +69,17 @@ struct BMPColorHeader {
     uint32_t color_space_type{ 0x73524742 }; // Default "sRGB" (0x73524742)
     uint32_t unused[16]{ 0 };                // Unused data for sRGB color space
 };
+#pragma pack(pop)
 
 class ZwBitmap
 {
 	//Attributes
 public:
-	uint8_t*** data;
 
 private:
+	uint8_t*** data;
+	uint8_t channel_shift_vals[4] = {2, 1, 0, 3}; //R,G,B,A
+	uint32_t height, width;
 	//Methods
 public:
 	ZwBitmap();
@@ -81,9 +88,18 @@ public:
 	bool readBitmap(std::string filename);
 	uint8_t*** getData();
 
-private:
-	bool sanitizeFilename(std::string);
+	uint32_t getHeight();
+	void setHeight(uint32_t height);
 
-	bool allocateMemory(int x, int y, int z);
-	bool deAllocateMemory();
+	uint32_t getWidth();
+	void setWidth(uint32_t width);
+
+private:
+	bool sanitizeFilename(const std::string& str);
+
+	void setChannelShiftValues(uint32_t blue_mask, uint32_t green_mask, uint32_t red_mask, uint32_t alpha_mask);
+	void setPixel(uint32_t x, uint32_t y, uint32_t& pixel_data);
+
+	bool allocateMemory(int x, int y, int z, uint8_t initial_value);
+	bool deAllocateMemory(int x, int y, int z);
 };

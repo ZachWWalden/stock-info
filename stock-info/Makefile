@@ -2,8 +2,8 @@ CFLAGS=-Wall -O3 -g -Wextra -Wno-unused-parameter
 CXXFLAGS=$(CFLAGS)
 OBJDIR = .build
 #SRCS != find . -name "*.cpp"
-SRCS=./Graphics/Graphics.cpp ./Text/Text.cpp stock-info-main.cpp ./Text/font-4x6.cpp ./Text/font-5x8.cpp ./Text/font-7x9.cpp ./Text/font-9x16.cpp
-SUBDIRS=./Text ./Graphics ./Graphics/Sprite ./Graphics/Scene
+SRCS=./Graphics/Graphics.cpp ./Graphics/Sprite/Sprite.cpp ./Text/Text.cpp stock-info-main.cpp ./Text/font-4x6.cpp ./Text/font-5x8.cpp ./Text/font-7x9.cpp ./Text/font-9x16.cpp ./Images/ZwBitmap.cpp
+SUBDIRS=./Text ./Graphics ./Graphics/Sprite ./Graphics/Scene ./Images
 OBJDIRS=$(SUBDIRS:%=$(OBJDIR)/%)
 OBJECTS := $(SRCS:%.cpp=$(OBJDIR)/%.o)
 TARGET=stock-info

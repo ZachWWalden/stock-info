@@ -3,6 +3,8 @@
 #include "stdlib.h"
 #include <cmath>
 
+#include "../Logging/Logging.hpp"
+
 Graphics::Graphics(Canvas* canvas, uint8_t height, uint8_t width)
 {
 		this->canvas = canvas;
@@ -417,6 +419,31 @@ void Graphics::Gradient2D(ZwGraphics::Gradient grad_left_right, ZwGraphics::Grad
 		color.green = this->sadd8(gx_tmp, gx_inc);
 		color.blue = this->sadd8(bx_tmp, bx_inc);
 	}
+}
+
+void Graphics::PlotSprite(ZwGraphics::Rectangle rect, uint8_t*** sprite_data)
+{
+	//Check to see if the Sprite will be on the screen
+	if(!this->isPointOnScreen(rect.p_top_left) || this->isPointOnScreen(rect.p_bot_right))
+	{
+		//LOGV("Sprite does not fit the screen.", "Graphics::PlotSprite()");
+		return;
+	}
+	int dx, dy;
+	dx = rect.p_top_left.x - rect.p_bot_right.x;
+	dy = rect.p_top_left.y - rect.p_bot_right.y;
+
+	for(int y = 0; y <= dy; y++)
+	{
+		for(int x = 0; x <= dx; x++)
+		{
+			if(sprite_data[y][x][3] == 0xFF)
+			{
+				this->PlotPoint(ZwGraphics::Point(x + rect.p_top_left.x, y + rect.p_top_left.y), ZwGraphics::Color(sprite_data[y][x][3],sprite_data[y][x][0],sprite_data[y][x][1],sprite_data[y][x][2]));
+			}
+		}
+	}
+
 }
 
 uint8_t Graphics::getHeight()
