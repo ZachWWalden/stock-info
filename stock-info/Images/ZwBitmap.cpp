@@ -108,8 +108,8 @@ bool ZwBitmap::readBitmap(std::string filename)
 			//read in pixel data
 			bmp_file.read(reinterpret_cast<char*>(&pixel), sizeof(uint32_t));
 			this->setPixel(x, y, pixel);
-			LOG_POINT(x, y);
-			LOG_INT(pixel);
+			//LOG_POINT(x, y);
+			//LOG_INT(pixel);
 		}
 	}
 
@@ -186,15 +186,20 @@ void ZwBitmap::setChannelShiftValues(uint32_t red_mask, uint32_t green_mask, uin
 			cont = false;
 		}
 	}
+	LOG("\n");
+	LOG_INT(this->channel_shift_vals[0]);
+	LOG_INT(this->channel_shift_vals[1]);
+	LOG_INT(this->channel_shift_vals[2]);
+	LOG_INT(this->channel_shift_vals[3]);
 }
 void ZwBitmap::setPixel(uint32_t x, uint32_t y, uint32_t& pixel_data)
 {
 	for(int i = 0; i < 4; i++)
 	{
 		this->data[y][x][i] = ((pixel_data & (0xFF << (this->channel_shift_vals[i] * 8))) >> (this->channel_shift_vals[i] * 8));
-		LOG("\n");
-		LOG_INT(this->channel_shift_vals[i]);
-		LOG_INT((pixel_data & (0xFF << (this->channel_shift_vals[i] * 8)) >> (this->channel_shift_vals[i] * 8)));
+		//LOG("\n");
+		//LOG_INT(this->channel_shift_vals[i]);
+		//LOG_INT((pixel_data & (0xFF << (this->channel_shift_vals[i] * 8)) >> (this->channel_shift_vals[i] * 8)));
 	}
 }
 bool ZwBitmap::allocateMemory(int x, int y, int z, uint8_t initial_value)
