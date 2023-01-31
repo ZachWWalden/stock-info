@@ -93,7 +93,7 @@ bool ZwBitmap::readBitmap(std::string filename)
 
 	this->setChannelShiftValues(color_header.blue_mask, color_header.green_mask, color_header.red_mask, color_header.alpha_mask);
 
-	this-height = info_header.height;
+	this->height = info_header.height;
 	this->width = info_header.width;
 
 	//read in pixel data;

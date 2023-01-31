@@ -27,8 +27,8 @@
 
 #if DEBUG
 #define LOG(x) std::cout << x << std::endl
-#define LOG_INT(x) std::cout << std::endl << std::hex << x << std::endl
-#define LOG_POINT(x, y) std::cout << std::hex << "X = " << x << ", Y = " << y << std::endl
+#define LOG_INT(x) std::cout << std::endl << std::hex << (int)x << std::endl
+#define LOG_POINT(x, y) std::cout << std::hex << "X = " << (int)x << ", Y = " << (int)y << std::endl
 #define LOGV(x,y) std::cout << x << ", On:" << y << std::endl
 #define LOG_IO(x,y,z) std::cout << "Error with File:" << x << x << z << std::endl
 #else
