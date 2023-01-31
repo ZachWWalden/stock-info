@@ -103,7 +103,7 @@ bool ZwBitmap::readBitmap(std::string filename)
 	bmp_file.seekg(file_header.offset_data, bmp_file.beg);
 	for(int x = 0; x < info_header.width; x++)
 	{
-		for(int y = 0; x < info_header.height; y++)
+		for(int y = 0; y < info_header.height; y++)
 		{
 			//read in pixel data
 			bmp_file.read(reinterpret_cast<char*>(&pixel), sizeof(uint32_t));
