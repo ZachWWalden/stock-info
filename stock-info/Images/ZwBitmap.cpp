@@ -192,6 +192,8 @@ void ZwBitmap::setPixel(uint32_t x, uint32_t y, uint32_t& pixel_data)
 	for(int i = 0; i < 4; i++)
 	{
 		this->data[y][x][i] = (pixel_data & (0xFF << (this->channel_shift_vals[i] * 8)) >> (this->channel_shift_vals[i] * 8));
+		LOG_POINT(x, y);
+		LOG_INT((pixel_data & (0xFF << (this->channel_shift_vals[i] * 8)) >> (this->channel_shift_vals[i] * 8)));
 	}
 }
 bool ZwBitmap::allocateMemory(int x, int y, int z, uint8_t initial_value)
