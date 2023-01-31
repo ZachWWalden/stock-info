@@ -424,9 +424,9 @@ void Graphics::Gradient2D(ZwGraphics::Gradient grad_left_right, ZwGraphics::Grad
 void Graphics::PlotSprite(ZwGraphics::Rectangle rect, uint8_t*** sprite_data)
 {
 	//Check to see if the Sprite will be on the screen
-	if(!this->isPointOnScreen(rect.p_top_left) || this->isPointOnScreen(rect.p_bot_right))
+	if(!this->isPointOnScreen(rect.p_top_left) || !this->isPointOnScreen(rect.p_bot_right))
 	{
-		//LOGV("Sprite does not fit the screen.", "Graphics::PlotSprite()");
+		LOGV("Sprite does not fit the screen.", "Graphics::PlotSprite()");
 		return;
 	}
 	int dx, dy;

@@ -101,13 +101,15 @@ bool ZwBitmap::readBitmap(std::string filename)
 		return false;
 	}
 	bmp_file.seekg(file_header.offset_data, bmp_file.beg);
-	for(int x = 0; x < info_header.width; x++)
+	for(int y = 0; y < info_header.height; y++)
 	{
-		for(int y = 0; y < info_header.height; y++)
+		for(int x = 0; x < info_header.width; x++)
 		{
 			//read in pixel data
 			bmp_file.read(reinterpret_cast<char*>(&pixel), sizeof(uint32_t));
 			this->setPixel(x, y, pixel);
+			LOG_POINT(x, y);
+			LOG_INT(pixel);
 		}
 	}
 
@@ -189,7 +191,7 @@ void ZwBitmap::setPixel(uint32_t x, uint32_t y, uint32_t& pixel_data)
 {
 	for(int i = 0; i < 4; i++)
 	{
-		this->data[y][x][i] = pixel_data & (0xFF << (this->channel_shift_vals[i] * 8));
+		this->data[y][x][i] = (pixel_data & (0xFF << (this->channel_shift_vals[i] * 8)) >> (this->channel_shift_vals[i] * 8));
 	}
 }
 bool ZwBitmap::allocateMemory(int x, int y, int z, uint8_t initial_value)

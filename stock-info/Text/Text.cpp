@@ -23,7 +23,6 @@ Text::~Text()
  ************************************************/
 FontStatus Text::WriteChar(int x0, int y0, uint8_t letter, Font font, ZwGraphics::Color color)
 {
-	std::cout << (char)letter << "\n";
 	//Check if the character is off of the screen
 	if(x0 > (this->graphics_mgr->getWidth() - font.width) || y0 > (this->graphics_mgr->getHeight() - font.num_rows))
 	{
