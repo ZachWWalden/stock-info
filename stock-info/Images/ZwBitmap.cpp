@@ -110,9 +110,9 @@ bool ZwBitmap::readBitmap(std::string filename)
 		{
 			//read in pixel data
 			bmp_file.read(reinterpret_cast<char*>(&pixel), sizeof(uint32_t));
-			this->setPixel(x, y, pixel);
-			//LOG_POINT(x, y);
-			//LOG_INT(pixel);
+			//this->setPixel(x, y, pixel);
+			LOG_POINT(x, y);
+			LOG_INT(pixel);
 		}
 	}
 
