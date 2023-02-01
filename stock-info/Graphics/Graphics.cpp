@@ -433,9 +433,9 @@ void Graphics::PlotSprite(ZwGraphics::Rectangle rect, uint8_t*** sprite_data)
 	dx = rect.p_bot_right.x - rect.p_top_left.x;
 	dy = rect.p_bot_right.y - rect.p_top_left.y;
 
-	for(int y = 0; y <= dy; y++)
+	for(int y = 0; y < dy; y++)
 	{
-		for(int x = 0; x <= dx; x++)
+		for(int x = 0; x < dx; x++)
 		{
 			if(sprite_data[y][x][3] == 0xFF)
 			{

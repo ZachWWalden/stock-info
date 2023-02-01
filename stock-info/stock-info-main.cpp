@@ -95,7 +95,6 @@ int main(int argc, char *argv[]) {
 
   //Create Frame Buffer
   uint8_t*** frmBuff = allocTriplePointer<uint8_t>(V_RES, H_RES, NUM_CHANNELS, (uint8_t)0x00);
-  uint8_t*** testSprite = allocTriplePointer<uint8_t>(16,9,4, (uint8_t)0xFF);
   // It is always good to set up a signal handler to cleanly exit when we
   // receive a CTRL-C for instance. The DrawOnCanvas() routine is looking
   // for that.
@@ -119,7 +118,7 @@ int main(int argc, char *argv[]) {
 	graphics_mgr.clearRenderTarget();
 	text_mgr.WriteString(H_RES - 4*9, 0, ticker, font916, text_color);
 	text_mgr.WriteString(H_RES - 7*7, 22, price, font79, text_color);
-	graphics_mgr.PlotSprite(ZwGraphics::Rectangle(ZwGraphics::Point(nflx->getXPosition(),nflx->getYPosition()), ZwGraphics::Point(nflx->getXPosition()+nflx->getWidth(), nflx->getYPosition()+nflx->getHeight())), testSprite);
+	graphics_mgr.PlotSprite(ZwGraphics::Rectangle(ZwGraphics::Point(nflx->getXPosition(),nflx->getYPosition()), ZwGraphics::Point(nflx->getXPosition()+nflx->getWidth(), nflx->getYPosition()+nflx->getHeight())), nflx->getSpriteData());
 	graphics_mgr.draw();
 	//draw string
 	//clear framebuffer
@@ -137,7 +136,6 @@ int main(int argc, char *argv[]) {
   canvas->Clear();
   delete canvas;
   deallocTriplePointer(frmBuff, V_RES, H_RES);
-  deallocTriplePointer(testSprite, 16,9);
   delete nflx;
 
   return 0;
