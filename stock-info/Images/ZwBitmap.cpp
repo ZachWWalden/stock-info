@@ -32,6 +32,9 @@
 #pragma once
 
 #include "ZwBitmap.hpp"
+#include "../Utils/triplepointer.hpp"
+
+#include <cstdint>
 #include <ios>
 
 
@@ -42,7 +45,7 @@ ZwBitmap::ZwBitmap()
 ZwBitmap::~ZwBitmap()
 {
 	//de allocate data
-	this->deAllocateMemory(this->getWidth(), this->getHeight(), 4);
+	deallocTriplePointer<uint8_t>(this->getData(), this->getWidth(), this->getHeight());
 }
 bool ZwBitmap::readBitmap(std::string filename)
 {
@@ -98,7 +101,8 @@ bool ZwBitmap::readBitmap(std::string filename)
 
 	//read in pixel data;
 	uint32_t pixel;
-	if(!this->allocateMemory(info_header.width, info_header.height, 4, 0xFF))
+	this->data = allocTriplePointer<uint8_t>(info_header.width, info_header.height, 4, 0xFF);
+	if(this->data == nullptr)
 	{
 		LOG_IO(filename, "BMP memory allocation Failed", "ZwBitmap::readBitmap()");
 		return false;
@@ -195,39 +199,7 @@ void ZwBitmap::setPixel(uint32_t x, uint32_t y, uint32_t& pixel_data)
 		this->data[y][x][i] = ((pixel_data & (0xFF << (this->channel_shift_vals[i] * 8))) >> (this->channel_shift_vals[i] * 8));
 	}
 }
-bool ZwBitmap::allocateMemory(int x, int y, int z, uint8_t initial_value)
-{
-	bool ret_val = true;
-	this->data = new uint8_t**[y];
-	for(int i = 0; i < y; i++)
-	{
-		this->data[i] = new uint8_t*[x];
-		for(int j = 0; j < x; j++)
-		{
-			this->data[i][j] = new uint8_t[z];
-			//Initialize values
-			for(int k = 0; k < z; k++)
-			{
-				this->data[i][j][k] = initial_value;
-			}
-		}
-	}
-	return ret_val;
-}
-bool ZwBitmap::deAllocateMemory(int x, int y, int z)
-{
-	bool ret_val = true;
-	for(int i = 0; i < y; i++)
-	{
-		for(int j = 0; j < x; j++)
-		{
-			delete [] this->data[i][j];
-		}
-		delete [] this->data[i];
-	}
-	delete [] this->data;
-	return ret_val;
-}
+
 
 
 

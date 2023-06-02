@@ -1,11 +1,3 @@
-/*==================================================================================
- *Class - Sprite
- *Author - Zach Walden
- *Created - 1/30/23
- *Last Changed - 1/30/23
- *Description - Sprite, basic wrapper around a bitmap. Abstracts dynamic allocation.
-====================================================================================*/
-
 /*
  * This program source code file is part of PROJECT_NAME
  *
@@ -28,42 +20,39 @@
  * or you may write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  */
-#pragma once
 
-#include <string>
-#include "stdint.h"
-
-#include "../../Images/ZwBitmap.hpp"
-#include "../Graphics.hpp"
-
-namespace ZwGraphics
+//Allocate Triple Pointer
+template <typename T>
+T*** allocTriplePointer(int y, int x, int depth, T initial_value)
 {
+	T*** ret_value = new T**[y];
+	for(int i = 0; i < y; i++)
+	{
+		ret_value[i] = new T*[x];
+		for(int j = 0; j < x; j++)
+		{
+			ret_value[i][j] = new T[depth];
+			//Initialize values
+			for(int k = 0; k < depth; k++)
+			{
+				ret_value[i][j][k] = initial_value;
+			}
+		}
+	}
+	return ret_value;
+}
 
-class Sprite
+//De-Allocate Triple Pointer
+template <typename T>
+void deallocTriplePointer(T*** pointer, int y, int x)
 {
-	//Attributes
-public:
-
-private:
-	ZwBitmap* bmp;
-	Point position;
-	//Methods
-public:
-	Sprite();
-	Sprite(std::string filename, Point position);
-	~Sprite();
-
-	uint8_t*** getSpriteData();
-
-	uint32_t getHeight();
-	uint32_t getWidth();
-
-	Rectangle getRect();
-
-	Point getPosition();
-	void setPosition(Point position);
-
-private:
-};
-
+	for(int i = 0; i < y; i++)
+	{
+		for(int j = 0; j < x; j++)
+		{
+			delete [] pointer[i][j];
+		}
+		delete [] pointer[i];
+	}
+	delete [] pointer;
 }

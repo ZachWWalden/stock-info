@@ -5,12 +5,23 @@
 
 #include "../Logging/Logging.hpp"
 
+namespace ZwGraphics
+{
+
 Graphics::Graphics(Canvas* canvas, uint8_t height, uint8_t width)
 {
 		this->canvas = canvas;
 		this->height = height;
 		this->width = width;
 }
+
+Graphics::Graphics(uint8_t*** render_target, uint8_t height, uint8_t width)
+{
+	this->render_target = render_target;
+	this->height = height;
+	this->width = width;
+}
+
 Graphics::~Graphics()
 {
 
@@ -18,16 +29,21 @@ Graphics::~Graphics()
 
 void Graphics::draw()
 {
+	if(this->canvas == nullptr)
+	{
+		return;
+	}
+
 	for(int rows = 0; rows < this->height; rows++)
 	{
 		for(int cols = 0; cols < this->width; cols++)
 		{
-			this->SetCanvasPixel(cols, rows, ZwGraphics::Color(0xFF, this->render_target[rows][cols][0], this->render_target[rows][cols][1], this->render_target[rows][cols][2]));
+			this->SetCanvasPixel(cols, rows, Color(0xFF, this->render_target[rows][cols][0], this->render_target[rows][cols][1], this->render_target[rows][cols][2]));
 		}
 	}
 }
 
-void Graphics::PlotPoint(uint8_t x, uint8_t y, ZwGraphics::Color color)
+void Graphics::PlotPoint(uint8_t x, uint8_t y, Color color)
 {
 	if(x >= this->width || y >= height || this->render_target == nullptr)
 		return;
@@ -59,7 +75,7 @@ void Graphics::BlendBuffers(int v_res, int h_res, uint8_t*** buf_one, uint8_t***
 	}
 }
 
-void Graphics::PlotPoint(ZwGraphics::Point point, ZwGraphics::Color color)
+void Graphics::PlotPoint(Point point, Color color)
 {
 	if(point.x >= this->width || point.y >= height || this->render_target == nullptr)
 		return;
@@ -70,7 +86,7 @@ void Graphics::PlotPoint(ZwGraphics::Point point, ZwGraphics::Color color)
 	this->render_target[point.y][point.x][2] = color.blue;
 
 }
-void Graphics::PlotLine(ZwGraphics::Point p1,ZwGraphics::Point p2, ZwGraphics::Color color)
+void Graphics::PlotLine(Point p1,Point p2, Color color)
 {
 	int x1,x2,y1,y2;
 	x1 = p1.x;
@@ -116,7 +132,7 @@ void Graphics::PlotLine(ZwGraphics::Point p1,ZwGraphics::Point p2, ZwGraphics::C
 		}
 	}
 }
-void Graphics::PlotLineHigh(ZwGraphics::Point p1,ZwGraphics::Point p2, ZwGraphics::Color color)
+void Graphics::PlotLineHigh(Point p1,Point p2, Color color)
 {
 	//All coordinates will be in quadrant 1.
 	///Cast to 32-bit signed integers.
@@ -138,7 +154,7 @@ void Graphics::PlotLineHigh(ZwGraphics::Point p1,ZwGraphics::Point p2, ZwGraphic
 
 	for(int y = y1; y <= y2; y++)
 	{
-		this->PlotPoint(ZwGraphics::Point(x, y), color);
+		this->PlotPoint(Point(x, y), color);
 		if(D > 0)
 		{
 			x += x_inc;
@@ -150,7 +166,7 @@ void Graphics::PlotLineHigh(ZwGraphics::Point p1,ZwGraphics::Point p2, ZwGraphic
 		}
 	}
 }
-void Graphics::PlotLineLow(ZwGraphics::Point p1,ZwGraphics::Point p2, ZwGraphics::Color color)
+void Graphics::PlotLineLow(Point p1,Point p2, Color color)
 {
 	//All coordinates will be in quadrant 1.
 	///Cast to 32-bit signed integers.
@@ -172,7 +188,7 @@ void Graphics::PlotLineLow(ZwGraphics::Point p1,ZwGraphics::Point p2, ZwGraphics
 
 	for(int x = x1;  x<= x2; x++)
 	{
-		this->PlotPoint(ZwGraphics::Point(x, y), color);
+		this->PlotPoint(Point(x, y), color);
 		if(D > 0)
 		{
 			y += y_inc;
@@ -184,7 +200,7 @@ void Graphics::PlotLineLow(ZwGraphics::Point p1,ZwGraphics::Point p2, ZwGraphics
 		}
 	}
 }
-void Graphics::PlotLineHorizontal(ZwGraphics::Point p1,ZwGraphics::Point p2, ZwGraphics::Color color)
+void Graphics::PlotLineHorizontal(Point p1,Point p2, Color color)
 {
 	uint8_t x_start, x_end;
 	if(p2.x > p1.x)
@@ -201,10 +217,10 @@ void Graphics::PlotLineHorizontal(ZwGraphics::Point p1,ZwGraphics::Point p2, ZwG
 	//Y stays the same for the whole time
 	for(uint8_t x = x_start; x <= x_end; x++)
 	{
-		this->PlotPoint(ZwGraphics::Point(x, p1.y), color);
+		this->PlotPoint(Point(x, p1.y), color);
 	}
 }
-void Graphics::PlotLineVertical(ZwGraphics::Point p1,ZwGraphics::Point p2, ZwGraphics::Color color)
+void Graphics::PlotLineVertical(Point p1,Point p2, Color color)
 {
 	uint8_t y_start, y_end;
 	if(p2.y > p1.y)
@@ -221,24 +237,24 @@ void Graphics::PlotLineVertical(ZwGraphics::Point p1,ZwGraphics::Point p2, ZwGra
 	//X stays the same for the whole time
 	for(uint8_t y = y_start; y <= y_end; y++)
 	{
-		this->PlotPoint(ZwGraphics::Point(p1.x, y), color);
+		this->PlotPoint(Point(p1.x, y), color);
 	}
 }
 
 
-void Graphics::PlotRectangle(ZwGraphics::Rectangle rect,ZwGraphics::Color color)
+void Graphics::PlotRectangle(Rectangle rect,Color color)
 {
 	uint8_t dx, dy;
 	dx = rect.p_bot_right.x - rect.p_top_left.x;
 	dy = rect.p_bot_right.y - rect.p_top_left.y;
 
-	this->PlotLineVertical(rect.p_top_left, ZwGraphics::Point(rect.p_top_left.x, rect.p_top_left.y + dy), color);
-	this->PlotLineVertical(ZwGraphics::Point(rect.p_top_left.x + dx,rect.p_top_left.y),rect.p_bot_right, color);
-	this->PlotLineHorizontal(rect.p_top_left, ZwGraphics::Point(rect.p_top_left.x + dx, rect.p_top_left.y), color);
-	this->PlotLineHorizontal(ZwGraphics::Point(rect.p_top_left.x,rect.p_top_left.y + dy),rect.p_bot_right, color);
+	this->PlotLineVertical(rect.p_top_left, Point(rect.p_top_left.x, rect.p_top_left.y + dy), color);
+	this->PlotLineVertical(Point(rect.p_top_left.x + dx,rect.p_top_left.y),rect.p_bot_right, color);
+	this->PlotLineHorizontal(rect.p_top_left, Point(rect.p_top_left.x + dx, rect.p_top_left.y), color);
+	this->PlotLineHorizontal(Point(rect.p_top_left.x,rect.p_top_left.y + dy),rect.p_bot_right, color);
 }
 
-void Graphics::PlotRectangleFilled(ZwGraphics::Rectangle rect,ZwGraphics::Color color)
+void Graphics::PlotRectangleFilled(Rectangle rect,Color color)
 {
 	uint8_t dx, dy;
 	dx = rect.p_bot_right.x - rect.p_top_left.x;
@@ -246,12 +262,12 @@ void Graphics::PlotRectangleFilled(ZwGraphics::Rectangle rect,ZwGraphics::Color 
 
 	for(uint8_t i = 0; i <= dx; i++)
 	{
-		this->PlotLineVertical(ZwGraphics::Point(rect.p_top_left.x + i, rect.p_top_left.y), ZwGraphics::Point(rect.p_top_left.x + i, rect.p_top_left.y + dy), color);
+		this->PlotLineVertical(Point(rect.p_top_left.x + i, rect.p_top_left.y), Point(rect.p_top_left.x + i, rect.p_top_left.y + dy), color);
 	}
 
 }
 
-void Graphics::PlotTriangle(ZwGraphics::Triangle tri, ZwGraphics::Color color)
+void Graphics::PlotTriangle(Triangle tri, Color color)
 {
 	//Check that all point are with the screen
 	if(!this->isPointOnScreen(tri.p1) && !this->isPointOnScreen(tri.p2) && !this->isPointOnScreen(tri.p3))
@@ -261,12 +277,12 @@ void Graphics::PlotTriangle(ZwGraphics::Triangle tri, ZwGraphics::Color color)
 	this->PlotLine(tri.p1, tri.p3, color);
 	this->PlotLine(tri.p3, tri.p2, color);
 }
-void Graphics::PlotTriangleFilled(ZwGraphics::Triangle tri, ZwGraphics::Color color)
+void Graphics::PlotTriangleFilled(Triangle tri, Color color)
 {
 	return; //TODO this function
 }
 
-void Graphics::PlotCircle(ZwGraphics::Circle circle, ZwGraphics::Color color)
+void Graphics::PlotCircle(Circle circle, Color color)
 {
 	//only supports circles with odd radii, to support even radii, add 1 to radius, but do not render that midpoint.
 	int r, x_mid, y_mid, y, x, err;
@@ -280,10 +296,10 @@ void Graphics::PlotCircle(ZwGraphics::Circle circle, ZwGraphics::Color color)
 	if(!(x_mid + r < this->getWidth() && x_mid - r >= 0 && y_mid + r < this->getHeight() && y_mid - r >= 0))
 		return;
 	//Plot the middle points if radius is odd.
-	this->PlotPoint(ZwGraphics::Point(x_mid, y_mid + r), color);
-	this->PlotPoint(ZwGraphics::Point(x_mid, y_mid - r), color);
-	this->PlotPoint(ZwGraphics::Point(x_mid + r, y_mid), color);
-	this->PlotPoint(ZwGraphics::Point(x_mid - r, y_mid), color);
+	this->PlotPoint(Point(x_mid, y_mid + r), color);
+	this->PlotPoint(Point(x_mid, y_mid - r), color);
+	this->PlotPoint(Point(x_mid + r, y_mid), color);
+	this->PlotPoint(Point(x_mid - r, y_mid), color);
 
 	while(y >= x)
 	{
@@ -298,18 +314,18 @@ void Graphics::PlotCircle(ZwGraphics::Circle circle, ZwGraphics::Color color)
 			err += (x << 2) + 6;
 		}
 		//Plot the points
-		this->PlotPoint(ZwGraphics::Point(x_mid + x,y_mid + y), color);
-		this->PlotPoint(ZwGraphics::Point(x_mid + x,y_mid - y), color);
-		this->PlotPoint(ZwGraphics::Point(x_mid - x,y_mid + y), color);
-		this->PlotPoint(ZwGraphics::Point(x_mid - x,y_mid - y), color);
-		this->PlotPoint(ZwGraphics::Point(x_mid + y,y_mid + x), color);
-		this->PlotPoint(ZwGraphics::Point(x_mid + y,y_mid - x), color);
-		this->PlotPoint(ZwGraphics::Point(x_mid - y,y_mid + x), color);
-		this->PlotPoint(ZwGraphics::Point(x_mid - y,y_mid - x), color);
+		this->PlotPoint(Point(x_mid + x,y_mid + y), color);
+		this->PlotPoint(Point(x_mid + x,y_mid - y), color);
+		this->PlotPoint(Point(x_mid - x,y_mid + y), color);
+		this->PlotPoint(Point(x_mid - x,y_mid - y), color);
+		this->PlotPoint(Point(x_mid + y,y_mid + x), color);
+		this->PlotPoint(Point(x_mid + y,y_mid - x), color);
+		this->PlotPoint(Point(x_mid - y,y_mid + x), color);
+		this->PlotPoint(Point(x_mid - y,y_mid - x), color);
 
 	}
 }
-void Graphics::PlotCircleFilled(ZwGraphics::Circle circle, ZwGraphics::Color color)
+void Graphics::PlotCircleFilled(Circle circle, Color color)
 {
 	//only supports circles with odd radii, to support even radii, add 1 to radius, but do not render that midpoint.
 	int r, x_mid, y_mid, y, x, err;
@@ -323,10 +339,10 @@ void Graphics::PlotCircleFilled(ZwGraphics::Circle circle, ZwGraphics::Color col
 	if(!(x_mid + r < this->getWidth() && x_mid - r >= 0 && y_mid + r < this->getHeight() && y_mid - r >= 0))
 		return;
 	//Plot the middle points if radius is odd.
-	this->PlotLine(circle.center, ZwGraphics::Point(x_mid, y_mid + r), color);
-	this->PlotLine(circle.center, ZwGraphics::Point(x_mid, y_mid - r), color);
-	this->PlotLine(circle.center, ZwGraphics::Point(x_mid + r, y_mid), color);
-	this->PlotLine(circle.center, ZwGraphics::Point(x_mid - r, y_mid), color);
+	this->PlotLine(circle.center, Point(x_mid, y_mid + r), color);
+	this->PlotLine(circle.center, Point(x_mid, y_mid - r), color);
+	this->PlotLine(circle.center, Point(x_mid + r, y_mid), color);
+	this->PlotLine(circle.center, Point(x_mid - r, y_mid), color);
 
 	while(y >= x)
 	{
@@ -341,19 +357,19 @@ void Graphics::PlotCircleFilled(ZwGraphics::Circle circle, ZwGraphics::Color col
 			err += (x << 2) + 6;
 		}
 		//Plot the points
-		this->PlotLine(circle.center, ZwGraphics::Point(x_mid + x,y_mid + y), color);
-		this->PlotLine(circle.center, ZwGraphics::Point(x_mid + x,y_mid - y), color);
-		this->PlotLine(circle.center, ZwGraphics::Point(x_mid - x,y_mid + y), color);
-		this->PlotLine(circle.center, ZwGraphics::Point(x_mid - x,y_mid - y), color);
-		this->PlotLine(circle.center, ZwGraphics::Point(x_mid + y,y_mid + x), color);
-		this->PlotLine(circle.center, ZwGraphics::Point(x_mid + y,y_mid - x), color);
-		this->PlotLine(circle.center, ZwGraphics::Point(x_mid - y,y_mid + x), color);
-		this->PlotLine(circle.center, ZwGraphics::Point(x_mid - y,y_mid - x), color);
+		this->PlotLine(circle.center, Point(x_mid + x,y_mid + y), color);
+		this->PlotLine(circle.center, Point(x_mid + x,y_mid - y), color);
+		this->PlotLine(circle.center, Point(x_mid - x,y_mid + y), color);
+		this->PlotLine(circle.center, Point(x_mid - x,y_mid - y), color);
+		this->PlotLine(circle.center, Point(x_mid + y,y_mid + x), color);
+		this->PlotLine(circle.center, Point(x_mid + y,y_mid - x), color);
+		this->PlotLine(circle.center, Point(x_mid - y,y_mid + x), color);
+		this->PlotLine(circle.center, Point(x_mid - y,y_mid - x), color);
 
 	}
 }
 
-void Graphics::Gradient1D(ZwGraphics::Gradient grad, ZwGraphics::Rectangle rect)
+void Graphics::Gradient1D(Gradient grad, Rectangle rect)
 {
 	//Ensure gradient window is contained by the screen
 	if(!this->isPointOnScreen(rect.p_top_left) || !this->isPointOnScreen(rect.p_bot_right))
@@ -370,18 +386,18 @@ void Graphics::Gradient1D(ZwGraphics::Gradient grad, ZwGraphics::Rectangle rect)
 
 	for(int i = 0; i <= dx; i++)
 	{
-		this->PlotLineVertical(ZwGraphics::Point(rect.p_top_left.x + i, rect.p_top_left.y), ZwGraphics::Point(rect.p_top_left.x + i, rect.p_top_left.y + dy), color);
+		this->PlotLineVertical(Point(rect.p_top_left.x + i, rect.p_top_left.y), Point(rect.p_top_left.x + i, rect.p_top_left.y + dy), color);
 		color.red += r_inc;
 		color.green += g_inc;
 		color.blue += b_inc;
 	}
 }
-void Graphics::Gradient2D(ZwGraphics::Gradient grad_left_right, ZwGraphics::Gradient grad_top_bot, ZwGraphics::Rectangle rect)
+void Graphics::Gradient2D(Gradient grad_left_right, Gradient grad_top_bot, Rectangle rect)
 {
 	//Ensure gradient window is contained by the screen
 	if(!this->isPointOnScreen(rect.p_top_left) || !this->isPointOnScreen(rect.p_bot_right))
 		return;
-	ZwGraphics::Color color = grad_left_right.start;
+	Color color = grad_left_right.start;
 	color.red = this->sadd8(color.red, grad_top_bot.start.red);
 	color.green = this->sadd8(color.green, grad_top_bot.start.green);
 	color.blue = this->sadd8(color.blue, grad_top_bot.start.blue);
@@ -421,7 +437,7 @@ void Graphics::Gradient2D(ZwGraphics::Gradient grad_left_right, ZwGraphics::Grad
 	}
 }
 
-void Graphics::PlotSprite(ZwGraphics::Rectangle rect, uint8_t*** sprite_data)
+void Graphics::PlotSprite(Rectangle rect, uint8_t*** sprite_data)
 {
 	//Check to see if the Sprite will be on the screen
 	if(!this->isPointOnScreen(rect.p_top_left) || !this->isPointOnScreen(rect.p_bot_right))
@@ -439,11 +455,80 @@ void Graphics::PlotSprite(ZwGraphics::Rectangle rect, uint8_t*** sprite_data)
 		{
 			if(sprite_data[y][x][3] == 0xFF)
 			{
-				this->PlotPoint(ZwGraphics::Point(x + rect.p_top_left.x, y + rect.p_top_left.y), ZwGraphics::Color(sprite_data[y][x][3],sprite_data[y][x][0],sprite_data[y][x][1],sprite_data[y][x][2]));
+				this->PlotPoint(Point(x + rect.p_top_left.x, y + rect.p_top_left.y), Color(sprite_data[y][x][3],sprite_data[y][x][0],sprite_data[y][x][1],sprite_data[y][x][2]));
 			}
 		}
 	}
 
+}
+
+/************************************************
+ * WriteChar Function - function plots a single *
+ * character.                                   *
+ ************************************************/
+FontStatus Graphics::PlotChar(Point position, uint8_t letter, Font font, Color color)
+{
+	//Check if the character is off of the screen
+	if(position.x > (this->getWidth() - font.width) || position.y > (this->getHeight() - font.num_rows))
+	{
+		return FontPrintCutoff;
+	}
+	//from width and row num, find initial shift value.
+	uint8_t shift_val = (font.row_size * 8) - font.width;
+	//set initial x value
+	uint8_t x = position.x + (font.width - 1);
+	//row byte loop
+	for(int row_byte = (font.row_size - 1); row_byte >= 0; row_byte--)
+	{
+		//loop through each mask value
+		while(shift_val < 8)
+		{
+			//Draw column
+			for(uint8_t y = position.y; (y - (uint8_t)position.y) < font.num_rows;y++)
+			{
+				if(((font.font[(letter * font.num_rows*font.row_size) + row_byte + ((y - position.y) * font.row_size)] >> shift_val) & 0x01) == 0x01)
+				{
+					this->PlotPoint(x,y,color);
+				}
+			}
+			shift_val++;
+			x--;
+		}
+		shift_val = 0;
+	}
+	return FontSuccess;
+}
+/************************************************
+ * WriteString Function - function plots a string *
+ ************************************************/
+FontStatus Graphics::PlotString(Point position, char *string, Font font, Color color){
+    FontStatus error_code=FontSuccess;
+
+    while(*string) // will loop until NULL is reached (0x00)
+    {
+        error_code=this->PlotChar(position, *string, font, color); // write the current character to the screen
+
+        if(error_code!=FontSuccess) // if WriteChar returns an error
+            return(error_code);      // stop and return it to the user
+
+        position.x += font.width;                       // increment the x axis to make a spot for the new character
+        //PlotVLine(x0,y0,7*tsize,backcolor);// plot a blank line between characters
+        string++;                          // increment the current character
+    }
+    return(FontSuccess); // return success code
+}
+
+
+Font Graphics::fontFactory(Fonts font_name)
+{
+	switch (font_name)
+	{
+		case Font4x6 : return Font(6, 1, 4, this->console_font_4x6);
+		case Font5x8 : return Font(8, 1, 5, this->console_font_5x8);
+		case Font7x9 : return Font(9, 1, 7, this->console_font_7x9);
+		case Font9x16 : return Font(16, 2, 9, this->console_font_9x16);
+		default : return Font(0,0,0,nullptr);
+	}
 }
 
 uint8_t Graphics::getHeight()
@@ -463,7 +548,7 @@ void Graphics::setWidth(uint8_t width)
 	this->width = width;
 }
 
-void Graphics::SetCanvasPixel(uint8_t x, uint8_t y, ZwGraphics::Color color)
+void Graphics::SetCanvasPixel(uint8_t x, uint8_t y, Color color)
 {
 	this->canvas->SetPixel(x, y, color.red, color.blue, color.green);
 }
@@ -491,7 +576,7 @@ void Graphics::clearRenderTarget()
 	}
 }
 
-bool Graphics::isPointOnScreen(ZwGraphics::Point pt)
+bool Graphics::isPointOnScreen(Point pt)
 {
 	bool ret_val = true;
 
@@ -504,4 +589,6 @@ bool Graphics::isPointOnScreen(ZwGraphics::Point pt)
 uint8_t Graphics::sadd8(uint8_t a, uint8_t b)
 {
 	return (a > 0xFF - b) ? 0xFF : a + b;
+}
+
 }

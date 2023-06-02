@@ -10,9 +10,10 @@
 #include <signal.h>
 #include <string>
 
-#include "Text/Text.hpp"
 #include "Graphics/Graphics.hpp"
+#include "Graphics/Scene/Scene.hpp"
 #include "Graphics/Sprite/Sprite.hpp"
+#include "Utils/triplepointer.hpp"
 #include "stdint.h"
 using rgb_matrix::RGBMatrix;
 using rgb_matrix::Canvas;
@@ -25,42 +26,6 @@ using rgb_matrix::Canvas;
 volatile bool interrupt_received = false;
 static void InterruptHandler(int signo) {
   interrupt_received = true;
-}
-
-//Allocate Triple Pointer
-template <typename T>
-T*** allocTriplePointer(int y, int x, int depth, T initial_value)
-{
-	T*** ret_value = new T**[y];
-	for(int i = 0; i < y; i++)
-	{
-		ret_value[i] = new T*[x];
-		for(int j = 0; j < x; j++)
-		{
-			ret_value[i][j] = new T[depth];
-			//Initialize values
-			for(int k = 0; k < depth; k++)
-			{
-				ret_value[i][j][k] = initial_value;
-			}
-		}
-	}
-	return ret_value;
-}
-
-//De-Allocate Triple Pointer
-template <typename T>
-void deallocTriplePointer(T*** pointer, int y, int x)
-{
-	for(int i = 0; i < y; i++)
-	{
-		for(int j = 0; j < x; j++)
-		{
-			delete [] pointer[i][j];
-		}
-		delete [] pointer[i];
-	}
-	delete [] pointer;
 }
 
 /*
@@ -93,32 +58,28 @@ int main(int argc, char *argv[]) {
   if (canvas == NULL)
     return 1;
 
-  //Create Frame Buffer
-  uint8_t*** frmBuff = allocTriplePointer<uint8_t>(V_RES, H_RES, NUM_CHANNELS, (uint8_t)0x00);
   // It is always good to set up a signal handler to cleanly exit when we
   // receive a CTRL-C for instance. The DrawOnCanvas() routine is looking
   // for that.
   signal(SIGTERM, InterruptHandler);
   signal(SIGINT, InterruptHandler);
 
-  Graphics graphics_mgr(canvas, V_RES, H_RES);
-  graphics_mgr.setRenderTarget(frmBuff);
-  Text text_mgr(&graphics_mgr);
-  Font font916 = text_mgr.fontFactory(Font9x16);
-  Font font79 = text_mgr.fontFactory(Font7x9);
+  ZwGraphics::Graphics graphics_mgr(canvas, V_RES, H_RES);
+  ZwGraphics::Font font916 = graphics_mgr.fontFactory(ZwGraphics::Font9x16);
+  ZwGraphics::Font font79 = graphics_mgr.fontFactory(ZwGraphics::Font7x9);
   char ticker[] = "NFLX";
   char price[] = "$353.11";
   ZwGraphics::Color text_color(255, 255, 0, 0);
   std::string filename = "stocks/nflx.bmp";
-  Sprite* nflx = new Sprite(filename, 0, 0);
-
+  ZwGraphics::Scene* nflxScene = new ZwGraphics::Scene(&graphics_mgr, V_RES, H_RES, 3);
+  nflxScene->addElement(new ZwGraphics::StringSceneElement(&graphics_mgr, ZwGraphics::Point(H_RES - 4*9, 0), ticker, font916, text_color));
+  nflxScene->addElement(new ZwGraphics::StringSceneElement(&graphics_mgr, ZwGraphics::Point(H_RES - 7*7, 22), price, font79, text_color));
+  nflxScene->addElement(new ZwGraphics::SpriteSceneElement(&graphics_mgr, new ZwGraphics::Sprite(filename, ZwGraphics::Point(0,0))));
   while(!interrupt_received)
   {
 	//measure time at start
 	graphics_mgr.clearRenderTarget();
-	text_mgr.WriteString(H_RES - 4*9, 0, ticker, font916, text_color);
-	text_mgr.WriteString(H_RES - 7*7, 22, price, font79, text_color);
-	graphics_mgr.PlotSprite(ZwGraphics::Rectangle(ZwGraphics::Point(nflx->getXPosition(),nflx->getYPosition()), ZwGraphics::Point(nflx->getXPosition()+nflx->getWidth(), nflx->getYPosition()+nflx->getHeight())), nflx->getSpriteData());
+	nflxScene->draw();
 	graphics_mgr.draw();
 	//draw string
 	//clear framebuffer
@@ -135,8 +96,6 @@ int main(int argc, char *argv[]) {
   // Animation finished. Shut down the RGB matrix.
   canvas->Clear();
   delete canvas;
-  deallocTriplePointer(frmBuff, V_RES, H_RES);
-  delete nflx;
-
+  delete nflxScene;
   return 0;
 }

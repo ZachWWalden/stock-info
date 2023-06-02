@@ -79,7 +79,7 @@ class ZwBitmap
 public:
 
 private:
-	uint8_t*** data;
+	uint8_t*** data = nullptr;
 	uint8_t channel_shift_vals[4] = {2, 1, 0, 3}; //R,G,B,A
 	uint32_t height, width;
 	//Methods
@@ -101,7 +101,4 @@ private:
 
 	void setChannelShiftValues(uint32_t blue_mask, uint32_t green_mask, uint32_t red_mask, uint32_t alpha_mask);
 	void setPixel(uint32_t x, uint32_t y, uint32_t& pixel_data);
-
-	bool allocateMemory(int x, int y, int z, uint8_t initial_value);
-	bool deAllocateMemory(int x, int y, int z);
 };

@@ -2,8 +2,8 @@
  *Class - Scene
  *Author - Zach Walden
  *Created - 12/20/22
- *Last Changed - 12/20/22
- *Description -
+ *Last Changed - 2/15/23
+ *Description - Represents a Scene to be displayed. deallocates scene elements and framebuffer.
 ====================================================================================*/
 
 /*
@@ -32,21 +32,13 @@
 #pragma once
 #include "stdint.h"
 #include <vector>
+#include "../Sprite/Sprite.hpp"
+#include "../Graphics.hpp"
 
-struct SceneElement
+//for rendering
+#include "SceneElement.hpp"
+namespace ZwGraphics
 {
-	uint8_t x;
-	uint8_t y;
-	char* string = nullptr;
-	Sprite* sprite = nullptr;
-
-	SceneElement(uint8_t x_coord, uint8_t y_coord)
-	{
-		x = x_coord;
-		y = y_coord;
-	}
-};
-
 //State Declarations
 enum SceneState
 {
@@ -54,7 +46,7 @@ enum SceneState
 };
 enum SceneEvent
 {
-	BeginTransition, EndTransition, MaintainState
+	BeginTransition, EndTransition, MaintainState, IncrementFrame
 };
 
 class Scene
@@ -65,23 +57,26 @@ public:
 private:
 	uint8_t height;
 	uint8_t width;
-	uint8_t num_channels;
+	uint8_t numChannels;
+
+	Graphics* graphics;
+
 	uint8_t*** buffer;
-	std::vector<SceneElement> elements;
+	std::vector<SceneElement*> elements;
 
 	//State
 	SceneState state = Unused;
 
 	//State vairables
-	uint8_t transition_rate = 17;
+	uint8_t transitionRate = 17;
 	uint8_t transparency = 0;
 	//Methods
 public:
-	Scene(uint8_t height, uint8_t width, uint8_t num_channels);
+	Scene(Graphics* graphics, uint8_t height, uint8_t width, uint8_t num_channels);
 	~Scene();
 
 	void draw();
-	bool addElement(SceneElement element);
+	bool addElement(SceneElement* element);
 
 	//Getters/Setters
 	uint8_t getHeight();
@@ -92,7 +87,7 @@ public:
 
 	uint8_t*** getBuffer();
 
-	std::vector* getElements();
+	std::vector<SceneElement*>* getElements();
 
 	//State Methods.
 	void HandleEvent(SceneEvent event);
@@ -101,12 +96,4 @@ public:
 private:
 };
 
-class StockLogoScene : Scene
-{
-
-};
-
-class StockGraphScene : Scene
-{
-
-};
+}

@@ -34,24 +34,25 @@
 #include "Sprite.hpp"
 #include "../../Logging/Logging.hpp"
 
+namespace ZwGraphics
+{
+
 Sprite::Sprite()
 {
 
 }
-Sprite::Sprite(std::string filename, uint8_t x, uint8_t y)
+Sprite::Sprite(std::string filename, Point position)
 {
 	this->bmp = new ZwBitmap();
 	if(bmp)
 	{
 		this->bmp->readBitmap(filename);
-		this->x = x;
-		this->y = y;
 	}
 	else
 	{
 		LOGV(filename,", Failed to allocate memory for Sprite.");
 	}
-
+	this->position = position;
 }
 Sprite::~Sprite()
 {
@@ -69,21 +70,20 @@ uint32_t Sprite::getWidth()
 {
 	return this->bmp->getWidth();
 }
-uint8_t Sprite::getXPosition()
+Rectangle Sprite::getRect()
 {
-	return this->x;
+	return Rectangle(this->position, Point(this->getPosition().x + this->getWidth(), this->getPosition().y + this->getHeight()));
 }
-void Sprite::setXPosition(uint8_t x)
+Point Sprite::getPosition()
 {
-	this->x = x;
+	return this->position;
 }
-uint8_t Sprite::getYPosition()
+void Sprite::setPosition(Point position)
 {
-	return this->y;
+	this->position = position;
 }
-void Sprite::setYPosition(uint8_t y)
-{
-	this->y = y;
+
+
 }
 
 /*

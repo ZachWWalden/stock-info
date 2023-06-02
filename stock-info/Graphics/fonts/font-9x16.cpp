@@ -1,7 +1,11 @@
 #pragma once
-#include "Text.hpp"
+#include "../Graphics.hpp"
 #include "stdint.h"
-uint8_t Text::console_font_9x16[] = {
+
+namespace ZwGraphics
+{
+
+uint8_t Graphics::console_font_9x16[] = {
 
     /*
      * code=0, hex=0x00, ascii="^@"
@@ -5123,3 +5127,5 @@ uint8_t Text::console_font_9x16[] = {
     0x00,0x00,  /* 000000000 */
     0x00,0x00,  /* 000000000 */
 };
+
+}

@@ -1,9 +1,9 @@
 /*==================================================================================
- *Class - Sprite
+ *Class -
  *Author - Zach Walden
- *Created - 1/30/23
- *Last Changed - 1/30/23
- *Description - Sprite, basic wrapper around a bitmap. Abstracts dynamic allocation.
+ *Created -
+ *Last Changed -
+ *Description -
 ====================================================================================*/
 
 /*
@@ -28,42 +28,32 @@
  * or you may write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  */
+
 #pragma once
 
-#include <string>
-#include "stdint.h"
+#include "CHANGE.hpp"
 
-#include "../../Images/ZwBitmap.hpp"
-#include "../Graphics.hpp"
 
-namespace ZwGraphics
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+<++> CHANGE::<++>()
 {
-
-class Sprite
-{
-	//Attributes
-public:
-
-private:
-	ZwBitmap* bmp;
-	Point position;
-	//Methods
-public:
-	Sprite();
-	Sprite(std::string filename, Point position);
-	~Sprite();
-
-	uint8_t*** getSpriteData();
-
-	uint32_t getHeight();
-	uint32_t getWidth();
-
-	Rectangle getRect();
-
-	Point getPosition();
-	void setPosition(Point position);
-
-private:
-};
 
 }
+*/

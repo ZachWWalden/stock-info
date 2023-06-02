@@ -31,26 +31,49 @@
 
 #pragma once
 
-#include "CHANGE.hpp"
+#include "Scene.hpp"
+#include "../../Utils/triplepointer.hpp"
+#include "stdint.h"
 
-Scene::Scene(uint8_t height, uint8_t width, uint8_t num_channels)
+namespace ZwGraphics
+{
+
+Scene::Scene(Graphics* graphics, uint8_t height, uint8_t width, uint8_t num_channels)
 {
 	this->height = height;
 	this->width = width;
-	this->num_channels = num_channels;
+	this->numChannels = num_channels;
+
+	this->graphics = graphics;
 	//Use new data to allocate memory
+	allocTriplePointer<uint8_t>(this->height, this->width, this->numChannels, 0xFF);
 }
-~Scene()
+Scene::~Scene()
 {
 	//Free Dynamically allocated buffer
+	deallocTriplePointer<uint8_t>(this->buffer, this->height, this->width);
+	//Deallocate SceneElements
+	for(int i = 0; i < this->elements.size(); i++)
+	{
+		delete this->elements[i];
+	}
 }
 void Scene::draw()
 {
-
+	//set graphics singleton render target to our scene buffer.
+	this->graphics->setRenderTarget(this->buffer);
+	this->graphics->setHeight(this->height);
+	this->graphics->setWidth(this->width);
+	//loop trhough elements
+	for (int i = 0; i < this->elements.size(); i++)
+	{
+		elements[i]->draw();
+	}
 }
-bool Scene::addElement(SceneElement element)
+bool Scene::addElement(SceneElement* element)
 {
-
+	this->elements.push_back(element);
+	return true;
 }
 uint8_t Scene::getHeight()
 {
@@ -72,7 +95,7 @@ uint8_t*** Scene::getBuffer()
 {
 	return this->buffer;
 }
-std::vector* Scene::getElements()
+std::vector<SceneElement*>* Scene::getElements()
 {
 	return &(this->elements);
 }
@@ -88,15 +111,32 @@ void Scene::HandleEvent(SceneEvent event)
 	}
 	else if(this->state == TransitionIn)
 	{
-		if(event == EndTransition
+		if(event == EndTransition)
+		{
+			this->state = Focused;
+		}
+		else if (event == IncrementFrame)
+		{
+			this->transparency += this->transitionRate;
+		}
 	}
 	else if(this->state == TransitionOut)
 	{
-
+		if(event == EndTransition)
+		{
+			this->state = Unused;
+		}
+		else if (event == IncrementFrame)
+		{
+			this->transparency -= this->transitionRate;
+		}
 	}
-	else if(this->state ++ Focused)
+	else if(this->state == Focused)
 	{
-
+		if(event == BeginTransition)
+		{
+			this-> state = TransitionOut;
+		}
 	}
 }
 uint8_t Scene::getTransparency()
@@ -104,7 +144,7 @@ uint8_t Scene::getTransparency()
 	return this->transparency;
 }
 
-
+}
 
 
 
@@ -121,7 +161,7 @@ uint8_t Scene::getTransparency()
 
 
 /*
-<++> CHANGE::<++>()
+<++> Scene::<++>()
 {
 
 }
