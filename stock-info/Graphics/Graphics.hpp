@@ -152,6 +152,16 @@ class Graphics
 		static uint8_t console_font_5x8[];
 		static uint8_t console_font_7x9[];
 		static uint8_t console_font_9x16[];
+
+		static const Color BLACK;
+		static const Color WHITE;
+		static const Color RED;
+		static const Color GREEN;
+		static const Color BLUE;
+		static const Color YELLOW;
+		static const Color MAGENTA;
+		static const Color CYAN;
+		static const Color TRANSPARENT;
 	//methods
 	public:
 		Graphics(Canvas* canvas, uint8_t height, uint8_t width);

@@ -7,6 +7,15 @@
 
 namespace ZwGraphics
 {
+	const Color Graphics::BLACK(255,0,0,0);
+	const Color Graphics::WHITE(255,255,255,255);
+	const Color Graphics::RED(255,255,0,0);
+	const Color Graphics::GREEN(255,0,255,0);
+	const Color Graphics::BLUE(255,0,0,255);
+	const Color Graphics::YELLOW(255,255,255,0);
+	const Color Graphics::MAGENTA(255,255,0,255);
+	const Color Graphics::CYAN(255,0,255,255);
+	const Color Graphics::TRANSPARENT(0,0,0,0);
 
 Graphics::Graphics(Canvas* canvas, uint8_t height, uint8_t width)
 {

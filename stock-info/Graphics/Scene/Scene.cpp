@@ -53,7 +53,7 @@ Scene::~Scene()
 	//Free Dynamically allocated buffer
 	deallocTriplePointer<uint8_t>(this->buffer, this->height, this->width);
 	//Deallocate SceneElements
-	for(int i = 0; i < this->elements.size(); i++)
+	for(long unsigned int i = 0; i < this->elements.size(); i++)
 	{
 		delete this->elements[i];
 	}
@@ -65,7 +65,7 @@ void Scene::draw()
 	this->graphics->setHeight(this->height);
 	this->graphics->setWidth(this->width);
 	//loop trhough elements
-	for (int i = 0; i < this->elements.size(); i++)
+	for (long unsigned int i = 0; i < this->elements.size(); i++)
 	{
 		elements[i]->draw();
 	}
