@@ -1,9 +1,9 @@
 /*==================================================================================
- *Class -
+ *Class - SceneElement
  *Author - Zach Walden
- *Created -
- *Last Changed -
- *Description -
+ *Created - 5/30/23
+ *Last Changed - 5/30/23
+ *Description - SceneElement Context
 ====================================================================================*/
 
 /*
@@ -29,31 +29,285 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  */
 
-#pragma once
 
-#include "CHANGE.hpp"
+#include "../Graphics.hpp"
+#include "../Sprite/Sprite.hpp"
 
+namespace ZwGraphics {
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-<++> CHANGE::<++>()
+class SceneElement
 {
+	//Attributes
+public:
+
+private:
+	Graphics* graphics = nullptr;
+	Point position;
+	//Methods
+public:
+	SceneElement(Graphics* graphics, Point position)
+	{
+		this->graphics = graphics;
+		this->position = position;
+	}
+	virtual ~SceneElement()
+	{
+
+	}
+
+	virtual void draw() = 0;
+
+	Point getPosition()
+	{
+		return this->position;
+	}
+
+	Graphics* getRenderer()
+	{
+		return this->graphics;
+	}
+private:
+};
+
+//Concrete Strategies
+class CharSceneElement : public SceneElement
+{
+	private:
+		char character;
+		Font cFont;
+		Color cColor;
+	public:
+		CharSceneElement(Graphics* graphics, Point position, char character, Font cFont, Color cColor) : SceneElement(graphics, position)
+		{
+			this->character = character;
+			this->cFont = cFont;
+			this->cColor = cColor;
+		}
+		void draw() override
+		{
+			if(this->getRenderer() == nullptr)
+				return;
+			this->getRenderer()->PlotChar(this->getPosition(), this->character, this->cFont, this->cColor);
+		}
+};
+
+class StringSceneElement : public SceneElement
+{
+	private:
+		char* string;
+		Font sFont;
+		Color sColor;
+	public:
+		~StringSceneElement()
+		{
+
+		}
+		StringSceneElement(Graphics* graphics, Point position, char* string, Font sFont, Color sColor) : SceneElement(graphics, position)
+		{
+			this->string = string;
+			this->sFont = sFont;
+			this->sColor = sColor;
+		}
+		void draw() override
+		{
+			if(this->getRenderer() == nullptr)
+				return;
+			this->getRenderer()->PlotString(this->getPosition(), this->string, this->sFont, this->sColor);
+		}
+};
+
+class SpriteSceneElement : public SceneElement
+{
+	private:
+		Sprite* sprite;
+	public:
+		~SpriteSceneElement()
+		{
+			delete this->sprite;
+		}
+		SpriteSceneElement(Graphics* graphics, Sprite* sprite) : SceneElement(graphics, sprite->getPosition())
+		{
+			this->sprite = sprite;
+		}
+		void draw() override
+		{
+			if(this->getRenderer() == nullptr)
+				return;
+			this->getRenderer()->PlotSprite(this->sprite->getRect(), this->sprite->getSpriteData());
+		}
+};
+
+class LineSceneElement : public SceneElement
+{
+	private:
+		Point pStart, pEnd;
+		Color lColor;
+	public:
+		LineSceneElement(Graphics* graphics, Point pStart, Point pEnd, Color lColor) : SceneElement(graphics, pStart)
+		{
+			this->pStart = pStart;
+			this->pEnd = pEnd;
+			this->lColor = lColor;
+		}
+		void draw() override
+		{
+			if(this->getRenderer() == nullptr)
+				return;
+			this->getRenderer()->PlotLine(pStart, pEnd, lColor);
+		}
+};
+
+class RectangleSceneElement : public SceneElement
+{
+	private:
+		Rectangle rRect;
+		Color rColor;
+	public:
+		RectangleSceneElement(Graphics* graphics, Rectangle rRect, Color rColor) : SceneElement(graphics, rRect.p_top_left)
+		{
+			this->rRect = rRect;
+			this->rColor = rColor;
+		}
+		void draw() override
+		{
+			if(this->getRenderer() == nullptr)
+				return;
+			this->getRenderer()->PlotRectangle(rRect, rColor);
+		}
+};
+
+class FilledRectangleSceneElement : public SceneElement
+{
+	private:
+		Rectangle rRect;
+		Color rColor;
+	public:
+		FilledRectangleSceneElement(Graphics* graphics, Rectangle rRect, Color rColor) : SceneElement(graphics, rRect.p_top_left)
+		{
+			this->rRect = rRect;
+			this->rColor = rColor;
+		}
+		void draw() override
+		{
+			if(this->getRenderer() == nullptr)
+				return;
+			this->getRenderer()->PlotRectangleFilled(rRect, rColor);
+		}
+};
+
+class CircleSceneElement : public SceneElement
+{
+	private:
+		Circle cCircle;
+		Color cColor;
+	public:
+		CircleSceneElement(Graphics* graphics, Circle cCircle, Color cColor) : SceneElement(graphics, cCircle.center)
+		{
+			this->cCircle = cCircle;
+			this->cColor = cColor;
+		}
+		void draw() override
+		{
+			if(this->getRenderer() == nullptr)
+				return;
+			this->getRenderer()->PlotCircle(cCircle, cColor);
+		}
+};
+
+class FilledCircleSceneElement : public SceneElement
+{
+	private:
+		Circle cCircle;
+		Color cColor;
+	public:
+		FilledCircleSceneElement(Graphics* graphics, Circle cCircle, Color cColor) : SceneElement(graphics, cCircle.center)
+		{
+			this->cCircle = cCircle;
+			this->cColor = cColor;
+		}
+		void draw() override
+		{
+			if(this->getRenderer() == nullptr)
+				return;
+			this->getRenderer()->PlotCircleFilled(cCircle, cColor);
+		}
+};
+
+class TriangleSceneElement : public SceneElement
+{
+	private:
+		Triangle tTriangle;
+		Color tColor;
+	public:
+		TriangleSceneElement(Graphics* graphics, Triangle tTriangle, Color tColor) : SceneElement(graphics, tTriangle.p1)
+		{
+			this->tTriangle = tTriangle;
+			this->tColor = tColor;
+		}
+		void draw() override
+		{
+			if(this->getRenderer() == nullptr)
+				return;
+			this->getRenderer()->PlotTriangle(tTriangle, tColor);
+		}
+};
+
+class FilledTriangleSceneElement : public SceneElement
+{
+	private:
+		Triangle tTriangle;
+		Color tColor;
+	public:
+		FilledTriangleSceneElement(Graphics* graphics, Triangle tTriangle, Color tColor) : SceneElement(graphics, tTriangle.p1)
+		{
+			this->tTriangle = tTriangle;
+			this->tColor = tColor;
+		}
+		void draw() override
+		{
+			if(this->getRenderer() == nullptr)
+				return;
+			this->getRenderer()->PlotTriangleFilled(tTriangle, tColor);
+		}
+};
+
+class GradientSceneElement : public SceneElement
+{
+	private:
+		Gradient gGradient;
+		Rectangle gRect;
+	public:
+		GradientSceneElement(Graphics* graphics, Rectangle gRect, Gradient gGradient) : SceneElement(graphics, gRect.p_top_left)
+		{
+			this->gGradient = gGradient;
+			this->gRect = gRect;
+		}
+		void draw() override
+		{
+			if(this->getRenderer() == nullptr)
+				return;
+			this->getRenderer()->Gradient1D(gGradient, gRect);
+		}
+};
+
+class Gradient2dSceneElement : public SceneElement
+{
+	private:
+		Gradient gGradient1, gGradient2;
+		Rectangle gRect;
+	public:
+		Gradient2dSceneElement(Graphics* graphics, Rectangle gRect, Gradient gGradient1, Gradient gGradient2) : SceneElement(graphics, gRect.p_top_left)
+		{
+			this->gGradient1 = gGradient1;
+			this->gGradient2 = gGradient2;
+			this->gRect = gRect;
+		}
+		void draw() override
+		{
+			if(this->getRenderer() == nullptr)
+				return;
+			this->getRenderer()->Gradient2D(gGradient1, gGradient2, gRect);
+		}
+};
 
 }
-*/

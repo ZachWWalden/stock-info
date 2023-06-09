@@ -2,7 +2,7 @@ CFLAGS=-Wall -O3 -g -Wextra -Wno-unused-parameter
 CXXFLAGS=$(CFLAGS)
 OBJDIR = .build
 #SRCS != find . -name "*.cpp"
-SRCS=./Graphics/Graphics.cpp  ./Graphics/Scene/Scene.cpp ./Graphics/Scene/SceneElement.hpp ./Graphics/Sprite/Sprite.cpp stock-info-main.cpp ./Graphics/fonts/font-4x6.cpp ./Graphics/fonts/font-5x8.cpp ./Graphics/fonts/font-7x9.cpp ./Graphics/fonts/font-9x16.cpp ./Images/ZwBitmap.cpp
+SRCS=./Graphics/Graphics.cpp  ./Graphics/Scene/Scene.cpp ./Graphics/Scene/SceneElement.cpp ./Graphics/Sprite/Sprite.cpp stock-info-main.cpp ./Graphics/fonts/font-4x6.cpp ./Graphics/fonts/font-5x8.cpp ./Graphics/fonts/font-7x9.cpp ./Graphics/fonts/font-9x16.cpp ./Images/ZwBitmap.cpp
 SUBDIRS=./Graphics ./Graphics/Sprite ./Graphics/Scene ./Images ./Graphics/fonts/
 OBJDIRS=$(SUBDIRS:%=$(OBJDIR)/%)
 OBJECTS := $(SRCS:%.cpp=$(OBJDIR)/%.o)

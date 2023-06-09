@@ -1,6 +1,6 @@
 #pragma once
 #include "stdint.h"
-#include "led-matrix.h"
+#include "../../include/led-matrix.h"
 
 using rgb_matrix::Canvas;
 

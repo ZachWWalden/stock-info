@@ -36,7 +36,7 @@
 #include "../Graphics.hpp"
 
 //for rendering
-#include "SceneElement.hpp"
+#include "SceneElement.cpp"
 namespace ZwGraphics
 {
 //State Declarations
