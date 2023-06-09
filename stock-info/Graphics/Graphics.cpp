@@ -31,6 +31,12 @@ void Graphics::draw()
 {
 	if(this->canvas == nullptr)
 	{
+		LOG("Graphics Instance does not have a Canvas to draw to");
+		return;
+	}
+	if(this->render_target == nullptr)
+	{
+		LOG("render_target is null");
 		return;
 	}
 

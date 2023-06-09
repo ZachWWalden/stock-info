@@ -46,7 +46,7 @@ Scene::Scene(Graphics* graphics, uint8_t height, uint8_t width, uint8_t num_chan
 
 	this->graphics = graphics;
 	//Use new data to allocate memory
-	allocTriplePointer<uint8_t>(this->height, this->width, this->numChannels, 0xFF);
+	this->buffer = allocTriplePointer<uint8_t>(this->height, this->width, this->numChannels, 0x00);
 }
 Scene::~Scene()
 {
