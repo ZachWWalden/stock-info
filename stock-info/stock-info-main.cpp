@@ -69,11 +69,10 @@ int main(int argc, char *argv[]) {
   ZwGraphics::Font font79 = graphics_mgr.fontFactory(ZwGraphics::Font7x9);
   char ticker[] = "NFLX";
   char price[] = "$353.11";
-  ZwGraphics::Color text_color(255, 255, 0, 0);
   std::string filename = "stocks/nflx.bmp";
   ZwGraphics::Scene* nflxScene = new ZwGraphics::Scene(&graphics_mgr, V_RES, H_RES, 3);
-  nflxScene->addElement(new ZwGraphics::StringSceneElement(&graphics_mgr, ZwGraphics::Point(H_RES - 4*9, 0), ticker, font916, text_color));
-  nflxScene->addElement(new ZwGraphics::StringSceneElement(&graphics_mgr, ZwGraphics::Point(H_RES - 7*7, 22), price, font79, text_color));
+  nflxScene->addElement(new ZwGraphics::StringSceneElement(&graphics_mgr, ZwGraphics::Point(H_RES - 4*9, 0), ticker, font916, ZwGraphics::Graphics::WHITE));
+  nflxScene->addElement(new ZwGraphics::StringSceneElement(&graphics_mgr, ZwGraphics::Point(H_RES - 7*7, 22), price, font79, ZwGraphics::Graphics::RED));
   nflxScene->addElement(new ZwGraphics::SpriteSceneElement(&graphics_mgr, new ZwGraphics::Sprite(filename, ZwGraphics::Point(0,0))));
   while(!interrupt_received)
   {
