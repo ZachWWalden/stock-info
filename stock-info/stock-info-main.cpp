@@ -78,7 +78,6 @@ int main(int argc, char *argv[]) {
   while(!interrupt_received)
   {
 	//measure time at start
-	graphics_mgr.clearRenderTarget();
 	nflxScene->draw();
 	graphics_mgr.draw();
 	//draw string
