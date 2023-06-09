@@ -45,7 +45,7 @@ ZwBitmap::ZwBitmap()
 ZwBitmap::~ZwBitmap()
 {
 	//de allocate data
-	deallocTriplePointer<uint8_t>(this->getData(), this->getWidth(), this->getHeight());
+	deallocTriplePointer<uint8_t>(this->getData(), this->getHeight(), this->getWidth());
 }
 bool ZwBitmap::readBitmap(std::string filename)
 {
@@ -101,7 +101,7 @@ bool ZwBitmap::readBitmap(std::string filename)
 
 	//read in pixel data;
 	uint32_t pixel;
-	this->data = allocTriplePointer<uint8_t>(info_header.width, info_header.height, 4, 0xFF);
+	this->data = allocTriplePointer<uint8_t>(info_header.height, info_header.width, 4, 0xFF);
 	if(this->data == nullptr)
 	{
 		LOG_IO(filename, "BMP memory allocation Failed", "ZwBitmap::readBitmap()");
