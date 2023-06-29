@@ -14,6 +14,7 @@
 #include "Graphics/Scene/Scene.hpp"
 #include "Graphics/Sprite/Sprite.hpp"
 #include "Utils/triplepointer.hpp"
+#include "Network/Network.hpp"
 #include "stdint.h"
 using rgb_matrix::RGBMatrix;
 using rgb_matrix::Canvas;
@@ -70,6 +71,9 @@ int main(int argc, char *argv[]) {
   char ticker[] = "NFLX";
   char price[] = "$353.11";
   std::string filename = "stocks/nflx.bmp";
+  std::string url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=NFLX&apikey=demo";
+  Network network(url);
+  network.makeRequest();
   ZwGraphics::Scene* nflxScene = new ZwGraphics::Scene(&graphics_mgr, V_RES, H_RES, 3);
   nflxScene->addElement(new ZwGraphics::StringSceneElement(&graphics_mgr, ZwGraphics::Point(H_RES - 4*9, 0), ticker, font916, ZwGraphics::Graphics::WHITE));
   nflxScene->addElement(new ZwGraphics::StringSceneElement(&graphics_mgr, ZwGraphics::Point(H_RES - 7*7, 22), price, font79, ZwGraphics::Graphics::RED));

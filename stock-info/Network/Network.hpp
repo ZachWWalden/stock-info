@@ -28,12 +28,27 @@
  * or you may write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  */
+#pragma once
 
+#include <cstddef>
+#include <cstdlib>
 #include <curl/curl.h>
 #include <string>
 
 #include "stdint.h"
 
+#define ALPHAVANTAGE_API_KEI "4ZE3A29HU6PM9YSU"
+struct Response
+{
+	char* memory;
+	std::size_t size;
+
+	Response()
+	{
+		memory = (char*)malloc(0);
+		size = 0;
+	}
+};
 
 class Network
 {
@@ -41,14 +56,23 @@ class Network
 public:
 
 private:
+	CURL* curl = nullptr;
+	std::string url;
+	Response* response = new Response();
 	//Methods
 public:
 	Network();
+	Network(std::string url);
 	~Network();
 
 	//Blocks on request until data has returned
-	void* makeRequest(std::string url);
+	void makeRequest();
+
+	static std::size_t WriteCallback(void* received_data, std::size_t size, std::size_t nmemb, void* userdata);
+
+	void setURL(std::string url);
 
 
 private:
+	void initCurl();
 };

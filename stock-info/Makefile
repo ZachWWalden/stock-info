@@ -2,8 +2,8 @@ CFLAGS=-Wall -O3 -g -Wextra -Wno-unused-parameter
 CXXFLAGS=$(CFLAGS)
 OBJDIR = .build
 #SRCS != find . -name "*.cpp"
-SRCS=./Graphics/Graphics.cpp  ./Graphics/Scene/Scene.cpp ./Graphics/Scene/SceneElement.cpp ./Graphics/Sprite/Sprite.cpp stock-info-main.cpp ./Graphics/fonts/font-4x6.cpp ./Graphics/fonts/font-5x8.cpp ./Graphics/fonts/font-7x9.cpp ./Graphics/fonts/font-9x16.cpp ./Images/ZwBitmap.cpp
-SUBDIRS=./Graphics ./Graphics/Sprite ./Graphics/Scene ./Images ./Graphics/fonts/
+SRCS=./Graphics/Graphics.cpp  ./Graphics/Scene/Scene.cpp ./Graphics/Scene/SceneElement.cpp ./Graphics/Sprite/Sprite.cpp stock-info-main.cpp ./Graphics/fonts/font-4x6.cpp ./Graphics/fonts/font-5x8.cpp ./Graphics/fonts/font-7x9.cpp ./Graphics/fonts/font-9x16.cpp ./Images/ZwBitmap.cpp ./Network/Network.cpp
+SUBDIRS=./Graphics ./Graphics/Sprite ./Graphics/Scene ./Images ./Graphics/fonts/ ./Network/
 OBJDIRS=$(SUBDIRS:%=$(OBJDIR)/%)
 OBJECTS := $(SRCS:%.cpp=$(OBJDIR)/%.o)
 TARGET=stock-info
@@ -20,7 +20,7 @@ RGB_INCDIR=$(RGB_LIB_DISTRIBUTION)/include
 RGB_LIBDIR=$(RGB_LIB_DISTRIBUTION)/lib
 RGB_LIBRARY_NAME=rgbmatrix
 RGB_LIBRARY=$(RGB_LIBDIR)/lib$(RGB_LIBRARY_NAME).a
-LDFLAGS+=-L$(RGB_LIBDIR) -l$(RGB_LIBRARY_NAME) -lrt -lm -lpthread
+LDFLAGS+=-L$(RGB_LIBDIR) -l$(RGB_LIBRARY_NAME) -lrt -lm -lpthread -lcurl -lssl -lcrypto
 
 all : $(TARGET)
 
