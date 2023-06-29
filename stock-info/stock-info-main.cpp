@@ -71,7 +71,7 @@ int main(int argc, char *argv[]) {
   char ticker[] = "NFLX";
   char price[] = "$353.11";
   std::string filename = "stocks/nflx.bmp";
-  std::string url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=NFLX&apikey=demo";
+  std::string url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=NFLX&apikey=4ZE3A29HU6PM9YSU";
   Network network(url);
   network.makeRequest();
   ZwGraphics::Scene* nflxScene = new ZwGraphics::Scene(&graphics_mgr, V_RES, H_RES, 3);
