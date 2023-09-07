@@ -7,7 +7,9 @@
 				{
 					"api_func" : "TIME_SERIES_INTRADAY",
 					"interval" : "30min",
-					"update" : "30m"
+					"update_interval" : "30",
+					"update_unit" : "m"
+
 				},
 				//{
 				//	"api_func" : "TIME_SERIES_DAILY_ADJUSTED",
@@ -30,7 +32,9 @@
 				{
 					"api_func" : "TIME_SERIES_INTRADAY",
 					"interval" : "30min",
-					"update" : "30m"
+					"update_interval" : "30",
+					"update_unit" : "m"
+
 				},
 				//{
 				//	"api_func" : "TIME_SERIES_DAILY_ADJUSTED",

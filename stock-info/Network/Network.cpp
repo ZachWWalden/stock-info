@@ -103,6 +103,15 @@ void Network::setURL(std::string url)
 	this->url = url;
 }
 
+void Network::buildURL(std::string ticker, ZwStock::ApiFunction apiFunction, std::string interval)
+{
+	std::string url = "";
+	if(apiFunction == ZwStock::ApiFunction::TIME_SERIES_INTRADAY)
+	{
+		url = this->BASE_URL + this->TS_INTRADAY + this->SYMBOL + ticker + this->INTERVAL + interval + this->API_KEY;
+	}
+	this->setURL(url);
+}
 void Network::initCurl()
 {
 	this->curl = curl_easy_init();

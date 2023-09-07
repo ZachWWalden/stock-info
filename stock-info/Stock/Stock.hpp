@@ -48,6 +48,7 @@ struct SeriesData
 {
 	ApiFunction function;
 	Json::Value data; //general data semaphore only is waited on while these are updated. Network thread will only request semaphore once it has data from the stock api.
+	std::string interval;
 	int NUM_CRON_STEPS;
 	int cronCounter;
 };
@@ -62,10 +63,11 @@ private:
 	std::vector<SeriesData> data;
 
 	std::string ticker;
+	std::string imagePath;
 	//Methods
 public:
 	Stock();
-	Stock(std::string ticker);
+	Stock(std::string ticker, std::string imagePath);
 	~Stock();
 
 	ZwGraphics::Scene* getScene(int index);

@@ -5,6 +5,7 @@
 // This code is public domain
 // (but note, that the led-matrix library this depends on is GPL v2)
 #include <bits/chrono.h>
+#include <cstddef>
 #include <cstdlib>
 #include <json/config.h>
 #include <json/reader.h>
@@ -15,6 +16,7 @@
 #include <signal.h>
 #include <string>
 #include <pthread.h>
+#include <semaphore.h>
 #include <json/json.h>
 #include <fstream>
 #include <iostream>
@@ -36,11 +38,11 @@ using rgb_matrix::Canvas;
 #define NUM_CHANNELS 3
 
 #define NUM_SECONDS 30
-#define MIN_CRON_STEPS 2
-#define HR_CRON_STEPS 120
-#define DAY_CRON_STEPS 2880
-#define WEEK_CRON_STEPS 20160
-#define MONTH_CRON_STEPS 80640 //defined as 4 weeks.
+#define MIN_CRON_STEPS 60/NUM_SECONDS
+#define HR_CRON_STEPS 60*MIN_CRON_STEPS
+#define DAY_CRON_STEPS 24*HR_CRON_STEPS
+#define WEEK_CRON_STEPS 7*DAY_CRON_STEPS
+#define MONTH_CRON_STEPS 4*WEEK_CRON_STEPS //defined as 4 weeks.
 
 #define CONFIG_PATH "stocks/stocks.json"
 
@@ -49,13 +51,30 @@ enum CronStepEnum
 	MINUTE = 0, HOUR = 1, DAY = 2, WEEK = 3, MONTH = 4
 };
 
-volatile std::vector<Stock> stocks;
+std::vector<ZwStock::Stock*> stocks;
 
 volatile bool interrupt_received = false;
 static void InterruptHandler(int signo) {
   interrupt_received = true;
 }
+void* networkThread(void* arg);
+int getNumCronSteps(Json::Value series)
+{
+	int unitCronSteps = 0;
+	//get unit
+	if(series["update_unit"].asString().compare("m") == 0)
+		unitCronSteps = MIN_CRON_STEPS;
+	else if (series["update_unit"].asString().compare("hr") == 0)
+		unitCronSteps = HR_CRON_STEPS;
+	else if (series["update_unit"].asString().compare("d") == 0)
+		unitCronSteps = HR_CRON_STEPS;
+	else if (series["update_unit"].asString().compare("w") == 0)
+		unitCronSteps = HR_CRON_STEPS;
+	else if (series["update_unit"].asString().compare("mn") == 0)
+		unitCronSteps = HR_CRON_STEPS;
 
+	return unitCronSteps;
+}
 /*
 static void Fill(uint8_t* frmBuff, uint8_t red, uint8_t green, uint8_t blue)
 {
@@ -113,6 +132,33 @@ int main(int argc, char *argv[]) {
 	return EXIT_FAILURE;
   }
   //build stock data structure.
+  //allocate memory for stocks vector based on number of stocks.
+  Json::Value stocksJson = root["stocks"];
+  //Resize stock vector based on the number of stocks in the configuration file.
+  stocks.resize(stocksJson.size());
+  for(int i = 0; i < stocksJson.size(); ++i)
+  {
+	Json::Value curStock = stocks[i];
+	//allocate new stock object, add it to vector of stocks.
+	ZwStock::Stock* newStock = new ZwStock::Stock(curStock["ticker"].asString(), curStock["image"].asString());
+	//loop thorugh time series.
+	Json::Value seriesJson = curStock["series"];
+
+	for(int j = 0; j < seriesJson.size(); ++j)
+	{
+		Json::Value curSeries = seriesJson[i];
+		ZwStock::SeriesData* newSeries = new ZwStock::SeriesData();
+		//TODO un hardcode
+		newSeries->function = ZwStock::ApiFunction::TIME_SERIES_INTRADAY;
+		newSeries->NUM_CRON_STEPS = getNumCronSteps(curSeries) * curSeries["update_interval"].asInt();
+		newSeries->interval = curSeries["interval"].asString();
+
+	}
+  }
+
+  //start network thread and wait for data.
+  long unsigned int tid;
+  pthread_create(&tid, NULL, networkThread, &tid);
 
   while(!interrupt_received)
   {
@@ -134,26 +180,35 @@ int main(int argc, char *argv[]) {
 	usleep(sleepTime); //period for 30fps
   }
 
+  //wait on network thread to exit.
+  pthread_join(tid, NULL);
   // Animation finished. Shut down the RGB matrix.
   canvas->Clear();
   delete canvas;
   return 0;
 }
 
-int networkThread()
+void* networkThread(void* arg)
 {
 
 	//create network object
-	//use std::string and its overloaded operators to form URLS
+	//get initial network data.
+	//acquire semaphore
 	for(int i = 0; i < stocks.size(); i++)
 	{
-
+		for (int j = 0; j < stocks[i]->getNumDataSeries(); j++)
+		{
+			ZwStock::SeriesData* curSeries = stocks[i]->getData(i);
+			curSeries->cronCounter++;
+			//get data from network.
+		}
 	}
+	//release semaphore.
 	while (!interrupt_received)
 	{
 		//Cron loop
 		usleep(1000*1000*NUM_SECONDS);
+		//loop through stocks and update data accordingly
 	}
-
-	return 0;
+	pthread_exit(0);
 }

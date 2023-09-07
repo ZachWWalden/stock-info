@@ -38,6 +38,8 @@
 
 #include "stdint.h"
 
+#include "../Stock/Stock.hpp"
+
 #define ALPHAVANTAGE_API_KEI "4ZE3A29HU6PM9YSU"
 
 namespace ZwNetwork
@@ -63,6 +65,9 @@ public:
 private:
 	CURL* curl = nullptr;
 	std::string url;
+	std::string BASE_URL = "https://www.alphavantage.co/query?function=";
+	std::string SYMBOL = "&symbol=", INTERVAL = "&interval=",API_KEY = "&apikey=4ZE3A29HU6PM9YSU";
+	std::string TS_INTRADAY = "TIME_SERIES_INTRADAY", TS_WEEKLY = "TIME_SERIES_WEEKLY", TS_MONTHLY = "TIME_SERIES_MONTHLY";
 	Response* response = new Response();
 
 	char errorBuffer[CURL_ERROR_SIZE + 10];
@@ -77,6 +82,7 @@ public:
 	static std::size_t WriteCallback(void* received_data, std::size_t size, std::size_t nmemb, void* userdata);
 
 	void setURL(std::string url);
+	void buildURL(std::string ticker, ZwStock::ApiFunction apiFunction, std::string interval);
 
 
 private:

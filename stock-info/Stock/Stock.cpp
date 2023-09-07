@@ -40,9 +40,10 @@ Stock::Stock()
 
 }
 
-Stock::Stock(std::string ticker)
+Stock::Stock(std::string ticker, std::string imagePath)
 {
 	this->ticker = ticker;
+	this->imagePath = imagePath;
 }
 
 Stock::~Stock()
