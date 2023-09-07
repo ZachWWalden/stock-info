@@ -1,0 +1,50 @@
+{
+	"stocks": [
+		{
+			"ticker" : "NFLX","
+			image" : "images/nflx.bmp",
+			"series" : [
+				{
+					"api_func" : "TIME_SERIES_INTRADAY",
+					"interval" : "30min",
+					"update" : "30m"
+				},
+				//{
+				//	"api_func" : "TIME_SERIES_DAILY_ADJUSTED",
+				//	"update" : "1d"
+				//},
+				//{
+				//	"api_func" : "TIME_SERIES_WEEKLY",
+				//	"update" : "1w"
+				//},
+				//{
+				//	"api_func" : "TIME_SERIES_MONTHLY",
+				//	"update" : "1m"
+				//},
+			]
+		},
+		{
+			"ticker" : "AAPL",
+			"image" : "images/aapl.bmp"
+			"series" : [
+				{
+					"api_func" : "TIME_SERIES_INTRADAY",
+					"interval" : "30min",
+					"update" : "30m"
+				},
+				//{
+				//	"api_func" : "TIME_SERIES_DAILY_ADJUSTED",
+				//	"update" : "1d"
+				//},
+				//{
+				//	"api_func" : "TIME_SERIES_WEEKLY",
+				//	"update" : "1w"
+				//},
+				//{
+				//	"api_func" : "TIME_SERIES_MONTHLY",
+				//	"update" : "1m"
+				//},
+			]
+		},
+	]
+}

@@ -1,10 +1,9 @@
 /*==================================================================================
- *Class - Network
+ *Class -
  *Author - Zach Walden
- *Created - 6/9/2023
- *Last Changed - 7/6/2023
- *Description - OO libcurl wrapper. The way is handles request data assumes that any Network
- *              request made to this wrapper will return json.
+ *Created -
+ *Last Changed -
+ *Description -
 ====================================================================================*/
 
 /*
@@ -29,58 +28,96 @@
  * or you may write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  */
+
 #pragma once
 
-#include <cstddef>
-#include <cstdlib>
-#include <curl/curl.h>
-#include <string>
-
-#include "stdint.h"
-
-#define ALPHAVANTAGE_API_KEI "4ZE3A29HU6PM9YSU"
-
-namespace ZwNetwork
+#include "Stock.hpp"
+namespace ZwStock
 {
 
-struct Response
+Stock::Stock()
 {
-	char* memory;
-	std::size_t size;
-
-	Response()
-	{
-		memory = (char*)malloc(0);
-		size = 0;
-	}
-};
-
-class Network
-{
-	//Attributes
-public:
-
-private:
-	CURL* curl = nullptr;
-	std::string url;
-	Response* response = new Response();
-
-	char errorBuffer[CURL_ERROR_SIZE + 10];
-	//Methods
-public:
-	Network();
-	Network(std::string url);
-	~Network();
-
-	Response* makeRequest();
-
-	static std::size_t WriteCallback(void* received_data, std::size_t size, std::size_t nmemb, void* userdata);
-
-	void setURL(std::string url);
-
-
-private:
-	void initCurl();
-};
 
 }
+
+Stock::Stock(std::string ticker)
+{
+	this->ticker = ticker;
+}
+
+Stock::~Stock()
+{
+
+}
+
+ZwGraphics::Scene* Stock::getScene(int index)
+{
+	if(index >= this->scenes.size())
+	{
+		LOG("Index out of range");
+		return nullptr;
+	}
+
+	return this->scenes[index];
+}
+
+int Stock::getNumScenes()
+{
+	return this->scenes.size();
+}
+
+void Stock::addScene(ZwGraphics::Scene* scene)
+{
+	this->scenes.push_back(scene);
+}
+
+SeriesData* Stock::getData(int index)
+{
+	if(index >= this->data.size())
+	{
+		LOG("Index out of range");
+		return nullptr;
+	}
+
+	return &(this->data[index]);
+}
+int Stock::getNumDataSeries()
+{
+	return this->data.size();
+}
+void Stock::addDataSeries(SeriesData* dataSeries)
+{
+
+}
+void Stock::draw()
+{
+	for (int i = 0; i < this->scenes.size(); i++)
+	{
+		this->scenes[i]->draw();
+	}
+}
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+<++> Stock::<++>()
+{
+
+}
+*/

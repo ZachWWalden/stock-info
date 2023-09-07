@@ -1,9 +1,9 @@
 /*==================================================================================
- *Class -
+ *Class - Network
  *Author - Zach Walden
- *Created -
- *Last Changed -
- *Description -
+ *Created - 6/9/2023
+ *Last Changed - 7/6/2023
+ *Description - OO libcurl wrapper
 ====================================================================================*/
 
 /*
@@ -38,6 +38,9 @@
 
 #include "../Logging/Logging.hpp"
 
+namespace ZwNetwork
+{
+
 Network::Network()
 {
 
@@ -57,12 +60,21 @@ Network::~Network()
 		curl_easy_cleanup(this->curl);
 }
 
-
-void Network::makeRequest()
+//NOTE the call to curl_easy_perform() will block until the ENTIRE request is complete. This includesthe call to the WRITE callback. This allows the return, and ownership transfer of the memory allocated inside the callback to the caller of makeRequest()
+Response* Network::makeRequest()
 {
 	curl_easy_setopt(this->curl, CURLOPT_URL, this->url.c_str());
 	CURLcode res = curl_easy_perform(this->curl);
 
+	if(res != CURLE_OK) //CURLE_OK is definded as 0
+	{
+		LOG("libcurl errored on request.\n");
+		LOG(this->errorBuffer);
+		LOG("\n");
+		return nullptr;
+	}
+
+	return this->response;
 }
 
 std::size_t Network::WriteCallback(void* received_data, std::size_t size, std::size_t nmemb, void* userdata)
@@ -74,7 +86,7 @@ std::size_t Network::WriteCallback(void* received_data, std::size_t size, std::s
 	if(!ptr)
 	{
 		//Out of Memory
-		LOG("Out of Memory, malloc returned NULL");
+		LOG("Out of Memory, malloc returned NULL\n");
 		return 0;
 	}
 
@@ -82,8 +94,6 @@ std::size_t Network::WriteCallback(void* received_data, std::size_t size, std::s
 	std::memcpy(&(mem->memory[mem->size]), received_data, realsize);
 	mem->size += realsize;
 	mem->memory[mem->size] = 0;
-
-	printf("%s", mem->memory);
 
 	return realsize;
 }
@@ -98,6 +108,9 @@ void Network::initCurl()
 	this->curl = curl_easy_init();
 	curl_easy_setopt(this->curl, CURLOPT_WRITEFUNCTION, this->WriteCallback);
 	curl_easy_setopt(this->curl, CURLOPT_WRITEDATA, (void*)this->response);
+	curl_easy_setopt(this->curl, CURLOPT_ERRORBUFFER, this->errorBuffer);
+}
+
 }
 
 

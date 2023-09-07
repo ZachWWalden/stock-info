@@ -1,10 +1,9 @@
 /*==================================================================================
- *Class - Network
+ *Class - Stock
  *Author - Zach Walden
- *Created - 6/9/2023
+ *Created - 7/6/2023
  *Last Changed - 7/6/2023
- *Description - OO libcurl wrapper. The way is handles request data assumes that any Network
- *              request made to this wrapper will return json.
+ *Description -
 ====================================================================================*/
 
 /*
@@ -29,58 +28,59 @@
  * or you may write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  */
-#pragma once
 
-#include <cstddef>
-#include <cstdlib>
-#include <curl/curl.h>
-#include <string>
+#include <json/value.h>
+#include <vector>
+#include <json/json.h>
 
-#include "stdint.h"
+#include "../Graphics/Scene/Scene.hpp"
+#include "../Logging/Logging.hpp"
 
-#define ALPHAVANTAGE_API_KEI "4ZE3A29HU6PM9YSU"
-
-namespace ZwNetwork
+namespace ZwStock
 {
 
-struct Response
+enum ApiFunction
 {
-	char* memory;
-	std::size_t size;
-
-	Response()
-	{
-		memory = (char*)malloc(0);
-		size = 0;
-	}
+	TIME_SERIES_INTRADAY, TIME_SERIES_DAILY_ADJUSTED, TIME_SERIES_WEEKLY, TIME_SERIES_MONTHLY
 };
 
-class Network
+struct SeriesData
+{
+	ApiFunction function;
+	Json::Value data; //general data semaphore only is waited on while these are updated. Network thread will only request semaphore once it has data from the stock api.
+	int NUM_CRON_STEPS;
+	int cronCounter;
+};
+
+class Stock
 {
 	//Attributes
 public:
 
 private:
-	CURL* curl = nullptr;
-	std::string url;
-	Response* response = new Response();
+	std::vector<ZwGraphics::Scene*> scenes;
+	std::vector<SeriesData> data;
 
-	char errorBuffer[CURL_ERROR_SIZE + 10];
+	std::string ticker;
 	//Methods
 public:
-	Network();
-	Network(std::string url);
-	~Network();
+	Stock();
+	Stock(std::string ticker);
+	~Stock();
 
-	Response* makeRequest();
+	ZwGraphics::Scene* getScene(int index);
+	int getNumScenes();
 
-	static std::size_t WriteCallback(void* received_data, std::size_t size, std::size_t nmemb, void* userdata);
+	void addScene(ZwGraphics::Scene* scene);
 
-	void setURL(std::string url);
+	SeriesData* getData(int index);
+	int getNumDataSeries();
 
+	void addDataSeries(SeriesData* dataSeries);
+
+	void draw();
 
 private:
-	void initCurl();
 };
 
 }

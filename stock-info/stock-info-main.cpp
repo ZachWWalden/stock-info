@@ -4,11 +4,22 @@
 //
 // This code is public domain
 // (but note, that the led-matrix library this depends on is GPL v2)
+#include <bits/chrono.h>
+#include <cstdlib>
+#include <json/config.h>
+#include <json/reader.h>
+#include <json/value.h>
 #include <unistd.h>
 #include <math.h>
 #include <stdio.h>
 #include <signal.h>
 #include <string>
+#include <pthread.h>
+#include <json/json.h>
+#include <fstream>
+#include <iostream>
+#include <vector>
+#include <chrono>
 
 #include "Graphics/Graphics.hpp"
 #include "Graphics/Scene/Scene.hpp"
@@ -23,6 +34,22 @@ using rgb_matrix::Canvas;
 #define V_RES 32
 #define H_RES 64
 #define NUM_CHANNELS 3
+
+#define NUM_SECONDS 30
+#define MIN_CRON_STEPS 2
+#define HR_CRON_STEPS 120
+#define DAY_CRON_STEPS 2880
+#define WEEK_CRON_STEPS 20160
+#define MONTH_CRON_STEPS 80640 //defined as 4 weeks.
+
+#define CONFIG_PATH "stocks/stocks.json"
+
+enum CronStepEnum
+{
+	MINUTE = 0, HOUR = 1, DAY = 2, WEEK = 3, MONTH = 4
+};
+
+volatile std::vector<Stock> stocks;
 
 volatile bool interrupt_received = false;
 static void InterruptHandler(int signo) {
@@ -68,36 +95,65 @@ int main(int argc, char *argv[]) {
   ZwGraphics::Graphics graphics_mgr(canvas, V_RES, H_RES);
   ZwGraphics::Font font916 = graphics_mgr.fontFactory(ZwGraphics::Font9x16);
   ZwGraphics::Font font79 = graphics_mgr.fontFactory(ZwGraphics::Font7x9);
-  char ticker[] = "NFLX";
-  char price[] = "$353.11";
-  std::string filename = "stocks/nflx.bmp";
   std::string url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=NFLX&interval=1min&apikey=4ZE3A29HU6PM9YSU";
-  Network network(url);
+  ZwNetwork::Network network(url);
   network.makeRequest();
-  ZwGraphics::Scene* nflxScene = new ZwGraphics::Scene(&graphics_mgr, V_RES, H_RES, 3);
-  nflxScene->addElement(new ZwGraphics::StringSceneElement(&graphics_mgr, ZwGraphics::Point(H_RES - 4*9, 0), ticker, font916, ZwGraphics::Graphics::WHITE));
-  nflxScene->addElement(new ZwGraphics::StringSceneElement(&graphics_mgr, ZwGraphics::Point(H_RES - 7*7, 22), price, font79, ZwGraphics::Graphics::RED));
-  nflxScene->addElement(new ZwGraphics::SpriteSceneElement(&graphics_mgr, new ZwGraphics::Sprite(filename, ZwGraphics::Point(0,0))));
+
+  //open list of tickers and ticker parameters.
+  Json::Value root;
+  std::ifstream ifs;
+  ifs.open(CONFIG_PATH);
+
+  Json::CharReaderBuilder builder;
+  JSONCPP_STRING errs;
+
+  if(!Json::parseFromStream(builder, ifs, &root, &errs))
+  {
+  	std::cout << errs << std::endl;
+	return EXIT_FAILURE;
+  }
+  //build stock data structure.
+
   while(!interrupt_received)
   {
 	//measure time at start
-	nflxScene->draw();
+	auto startTime = std::chrono::high_resolution_clock::now();
+	//DO STUFF
+	//{
+
+	//}
 	graphics_mgr.draw();
-	//draw string
-	//clear framebuffer
 	//measure time at end
-
+	auto endTime = std::chrono::high_resolution_clock::now();
 	//find execution time
-
+	auto execTime = std::chrono::duration_cast<std::chrono::microseconds>(endTime - startTime);
 	//subtract execution time from target frame period.
+	int sleepTime = 33333 - (int)execTime.count();
 
 	//sleep
-	usleep(1*1000);
+	usleep(sleepTime); //period for 30fps
   }
 
   // Animation finished. Shut down the RGB matrix.
   canvas->Clear();
   delete canvas;
-  delete nflxScene;
   return 0;
+}
+
+int networkThread()
+{
+
+	//create network object
+	//use std::string and its overloaded operators to form URLS
+	for(int i = 0; i < stocks.size(); i++)
+	{
+
+	}
+	while (!interrupt_received)
+	{
+		//Cron loop
+		usleep(1000*1000*NUM_SECONDS);
+	}
+
+	return 0;
 }
