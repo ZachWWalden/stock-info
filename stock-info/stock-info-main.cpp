@@ -114,9 +114,6 @@ int main(int argc, char *argv[]) {
   ZwGraphics::Graphics graphics_mgr(canvas, V_RES, H_RES);
   ZwGraphics::Font font916 = graphics_mgr.fontFactory(ZwGraphics::Font9x16);
   ZwGraphics::Font font79 = graphics_mgr.fontFactory(ZwGraphics::Font7x9);
-  std::string url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=NFLX&interval=1min&apikey=4ZE3A29HU6PM9YSU";
-  ZwNetwork::Network network(url);
-  network.makeRequest();
 
   //open list of tickers and ticker parameters.
   Json::Value root;
@@ -182,6 +179,7 @@ int main(int argc, char *argv[]) {
 
   //wait on network thread to exit.
   pthread_join(tid, NULL);
+
   // Animation finished. Shut down the RGB matrix.
   canvas->Clear();
   delete canvas;
@@ -192,6 +190,9 @@ void* networkThread(void* arg)
 {
 
 	//create network object
+	std::string url = "https://www.alphavantage.co/query"; //dummy URL
+    ZwNetwork::Network network(url);
+    ZwNetwork::Response* response;
 	//get initial network data.
 	//acquire semaphore
 	for(int i = 0; i < stocks.size(); i++)
@@ -199,8 +200,21 @@ void* networkThread(void* arg)
 		for (int j = 0; j < stocks[i]->getNumDataSeries(); j++)
 		{
 			ZwStock::SeriesData* curSeries = stocks[i]->getData(i);
-			curSeries->cronCounter++;
 			//get data from network.
+			network.buildURL(stocks[i]->getTicker(), curSeries->function, curSeries->interval);
+			response = network.makeRequest();
+			//marshall json
+			Json::Value root;
+			Json::CharReaderBuilder builder;
+			JSONCPP_STRING errs;
+			Json::CharReader* reader(builder.newCharReader());
+			if(!reader->parse(response->memory, response->memory + response->size, &root, &errs))
+			{
+				std::cout << "error parsing network json" << std::endl;
+			}
+			//free memory
+			delete response->memory;
+			curSeries->data = root;
 		}
 	}
 	//release semaphore.
@@ -209,6 +223,34 @@ void* networkThread(void* arg)
 		//Cron loop
 		usleep(1000*1000*NUM_SECONDS);
 		//loop through stocks and update data accordingly
+		for(int i = 0; i < stocks.size(); i++)
+		{
+			for (int j = 0; j < stocks[i]->getNumDataSeries(); j++)
+			{
+				ZwStock::SeriesData* curSeries = stocks[i]->getData(i);
+				curSeries->cronCounter++;
+				//if cron counter == NUM_CRON_STEPS
+				if(curSeries->cronCounter == curSeries->NUM_CRON_STEPS)
+				{
+					//get data from network.
+					network.buildURL(stocks[i]->getTicker(), curSeries->function, curSeries->interval);
+					response = network.makeRequest();
+					//marshall json
+					Json::Value root;
+					Json::CharReaderBuilder builder;
+					JSONCPP_STRING errs;
+					Json::CharReader* reader(builder.newCharReader());
+					if(!reader->parse(response->memory, response->memory + response->size, &root, &errs))
+					{
+						std::cout << "error parsing network json" << std::endl;
+					}
+					//free memory
+					delete response->memory;
+					curSeries->data = root;
+					curSeries->cronCounter = 0;
+				}
+			}
+		}
 	}
 	pthread_exit(0);
 }

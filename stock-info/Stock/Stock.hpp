@@ -60,7 +60,7 @@ public:
 
 private:
 	std::vector<ZwGraphics::Scene*> scenes;
-	std::vector<SeriesData> data;
+	std::vector<SeriesData*> data;
 
 	std::string ticker;
 	std::string imagePath;
@@ -79,6 +79,8 @@ public:
 	int getNumDataSeries();
 
 	void addDataSeries(SeriesData* dataSeries);
+
+	std::string getTicker();
 
 	void draw();
 

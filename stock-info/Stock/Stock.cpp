@@ -80,7 +80,7 @@ SeriesData* Stock::getData(int index)
 		return nullptr;
 	}
 
-	return &(this->data[index]);
+	return this->data[index];
 }
 int Stock::getNumDataSeries()
 {
@@ -88,7 +88,11 @@ int Stock::getNumDataSeries()
 }
 void Stock::addDataSeries(SeriesData* dataSeries)
 {
-
+	this->data.push_back(dataSeries);
+}
+std::string Stock::getTicker()
+{
+	return this->ticker;
 }
 void Stock::draw()
 {
