@@ -160,7 +160,7 @@ int main(int argc, char *argv[]) {
 		newSeries->interval = curSeries["interval"].asString();
 
 	}
-	stocks.push_back(curStock);
+	stocks.push_back(newStock);
   }
 
   //start network thread and wait for data.
