@@ -29,9 +29,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  */
 
-#include <json/value.h>
 #include <vector>
-#include <json/json.h>
+#include <jsoncpp/json/json.h>
 
 #include "../Graphics/Scene/Scene.hpp"
 #include "../Logging/Logging.hpp"

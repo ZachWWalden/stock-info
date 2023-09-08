@@ -4,12 +4,8 @@
 //
 // This code is public domain
 // (but note, that the led-matrix library this depends on is GPL v2)
-#include <bits/chrono.h>
 #include <cstddef>
 #include <cstdlib>
-#include <json/config.h>
-#include <json/reader.h>
-#include <json/value.h>
 #include <unistd.h>
 #include <math.h>
 #include <stdio.h>
@@ -17,7 +13,7 @@
 #include <string>
 #include <pthread.h>
 #include <semaphore.h>
-#include <json/json.h>
+#include <jsoncpp/json/json.h>
 #include <fstream>
 #include <iostream>
 #include <vector>
@@ -148,7 +144,7 @@ int main(int argc, char *argv[]) {
   stocks.resize(stocksJson.size());
   for(int i = 0; i < stocksJson.size(); ++i)
   {
-	Json::Value curStock = stocks[i];
+	Json::Value curStock = stocksJson[i];
 	//allocate new stock object, add it to vector of stocks.
 	ZwStock::Stock* newStock = new ZwStock::Stock(curStock["ticker"].asString(), curStock["image"].asString());
 	//loop thorugh time series.
@@ -164,6 +160,7 @@ int main(int argc, char *argv[]) {
 		newSeries->interval = curSeries["interval"].asString();
 
 	}
+	stocks.push_back(curStock);
   }
 
   //start network thread and wait for data.
