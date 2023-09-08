@@ -94,6 +94,11 @@ std::string Stock::getTicker()
 {
 	return this->ticker;
 }
+std::string Stock::getImagePath()
+{
+	return this->imagePath;
+}
+
 void Stock::draw()
 {
 	for (int i = 0; i < this->scenes.size(); i++)

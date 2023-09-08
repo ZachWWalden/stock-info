@@ -51,6 +51,7 @@ struct SeriesData
 	std::string interval;
 	int NUM_CRON_STEPS;
 	int cronCounter;
+	bool dataChanged = false;
 };
 
 class Stock
@@ -81,6 +82,7 @@ public:
 	void addDataSeries(SeriesData* dataSeries);
 
 	std::string getTicker();
+	std::string getImagePath();
 
 	void draw();
 

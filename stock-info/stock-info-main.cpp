@@ -44,7 +44,10 @@ using rgb_matrix::Canvas;
 #define WEEK_CRON_STEPS 7*DAY_CRON_STEPS
 #define MONTH_CRON_STEPS 4*WEEK_CRON_STEPS //defined as 4 weeks.
 
+#define NUM_FRAMES_PER_SCENE 240
+
 #define CONFIG_PATH "stocks/stocks.json"
+#define IMAGE_PATH "stocks/"
 
 enum CronStepEnum
 {
@@ -75,6 +78,9 @@ int getNumCronSteps(Json::Value series)
 
 	return unitCronSteps;
 }
+
+sem_t sem;
+
 /*
 static void Fill(uint8_t* frmBuff, uint8_t red, uint8_t green, uint8_t blue)
 {
@@ -110,6 +116,13 @@ int main(int argc, char *argv[]) {
   // for that.
   signal(SIGTERM, InterruptHandler);
   signal(SIGINT, InterruptHandler);
+
+  if(sem_init(&sem, 0, 0))
+  {
+	LOG("Failed to initialize semaphore");
+	return EXIT_FAILURE;
+  }
+
 
   ZwGraphics::Graphics graphics_mgr(canvas, V_RES, H_RES);
   ZwGraphics::Font font916 = graphics_mgr.fontFactory(ZwGraphics::Font9x16);
@@ -157,13 +170,137 @@ int main(int argc, char *argv[]) {
   long unsigned int tid;
   pthread_create(&tid, NULL, networkThread, &tid);
 
+  int animationCounter = 0;
+  int i = 0, j = 0;
+
   while(!interrupt_received)
   {
 	//measure time at start
 	auto startTime = std::chrono::high_resolution_clock::now();
 	//DO STUFF
 	//{
-
+		if(animationCounter == NUM_FRAMES_PER_SCENE - 1)
+		{
+			//Increment loop counter
+			j++;
+			if (j == stocks[i]->getNumScenes() - 1)
+			{
+				i++;
+				j = 0;
+				if (i == stocks.size() - 1)
+				{
+					i = 0;
+				}
+			}
+			animationCounter = 0;
+		}
+		else
+		{
+			animationCounter++;
+		}
+		//Acquire semaphore
+		sem_wait(&sem);
+		if (stocks[i]->getData(j)->dataChanged) //If graphs are to be added following the current price, this index will be j + j % 2
+		{
+			ZwGraphics::Scene* curScene;
+			//build scene.
+			//cases: no scenes, scenes.
+			if (stocks[i]->getNumScenes() == 0)
+			{
+				curScene = new ZwGraphics::Scene(&graphics_mgr, V_RES, H_RES, NUM_CHANNELS);
+				//add in ticker, scene element.
+				curScene->addElement(new ZwGraphics::StringSceneElement(&graphics_mgr, ZwGraphics::Point(H_RES - stocks[i]->getTicker().length()*9, 0), (char*)stocks[i]->getTicker().c_str(), font916, ZwGraphics::Graphics::WHITE));
+				//Load and add the sprite
+				std::string imagePath = IMAGE_PATH;
+				curScene->addElement(new ZwGraphics::SpriteSceneElement(&graphics_mgr, new ZwGraphics::Sprite(imagePath + stocks[i]->getImagePath(), ZwGraphics::Point(0,0))));
+				//get price from data.
+				float prices[2];
+				//{
+					Json::Value data = stocks[i]->getData(j)->data;
+					//data = data["Time Series (" + stocks[i]->getData(j)->interval + ")"];
+					data = data[1];
+					Json::Value ochlv;
+					for(int k = 0; k < 2; k++)
+					{
+						ochlv = data[k];
+						prices[k] = ochlv["4. close"].asFloat();
+					}
+				//}
+				ZwGraphics::Color stkColor = ZwGraphics::Graphics::WHITE;
+				//calculate did it go up or down?
+				if (prices[0] > prices[1])
+				{
+					stkColor = ZwGraphics::Graphics::GREEN;
+				}
+				else
+				{
+					stkColor = ZwGraphics::Graphics::RED;
+				}
+				//convert price to string.
+				std::string price = std::to_string(prices[0]);
+				ZwGraphics::Font font = font79;
+				//will string not fit in screen???
+				if(price.length()*font.width > H_RES)
+				{
+					font = graphics_mgr.fontFactory(ZwGraphics::Font4x6);
+				}
+				//add string scene element
+				curScene->addElement(new ZwGraphics::StringSceneElement(&graphics_mgr, ZwGraphics::Point(H_RES - price.length()*font.width, V_RES - font.num_rows), (char*)price.c_str(), font, stkColor));
+				curScene->draw();
+				stocks[i]->addScene(curScene);
+			}
+			else
+			{
+				curScene = stocks[i]->getScene(j);
+				//loop through and delete all scene elements except the logo and ticker. Due to how each scene's list of scene elements, the first to items in that list never need to be deleted on a data update.
+				std::vector<ZwGraphics::SceneElement*>* elements = curScene->getElements();
+				for(int k = 2; k < elements->size(); k++)
+				{
+				   delete elements->at(k);
+				}
+				//clear the render buffer
+				graphics_mgr.setRenderTarget(curScene->getBuffer());
+				graphics_mgr.clearRenderTarget();
+				//get price from data.
+				float prices[2];
+				//{
+					Json::Value data = stocks[i]->getData(j)->data;
+					//data = data["Time Series (" + stocks[i]->getData(j)->interval + ")"];
+					data = data[1];
+					Json::Value ochlv;
+					for(int k = 0; k < 2; k++)
+					{
+						ochlv = data[k];
+						prices[k] = ochlv["4. close"].asFloat();
+					}
+				//}
+				ZwGraphics::Color stkColor = ZwGraphics::Graphics::WHITE;
+				//calculate did it go up or down?
+				if (prices[0] > prices[1])
+				{
+					stkColor = ZwGraphics::Graphics::GREEN;
+				}
+				else
+				{
+					stkColor = ZwGraphics::Graphics::RED;
+				}
+				//convert price to string.
+				std::string price = std::to_string(prices[0]);
+				ZwGraphics::Font font = font79;
+				//will string not fit in screen???
+				if(price.length()*font.width > H_RES)
+				{
+					font = graphics_mgr.fontFactory(ZwGraphics::Font4x6);
+				}
+				//add string scene element
+				curScene->addElement(new ZwGraphics::StringSceneElement(&graphics_mgr, ZwGraphics::Point(H_RES - price.length()*font.width, V_RES - font.num_rows), (char*)price.c_str(), font, stkColor));
+				curScene->draw();
+			}
+			stocks[i]->getData(j)->dataChanged = false;
+		}
+		stocks[i]->getScene(j)->draw();
+		//release semaphore
+		sem_post(&sem);
 	//}
 	graphics_mgr.draw();
 	//measure time at end
@@ -195,6 +332,7 @@ void* networkThread(void* arg)
     ZwNetwork::Response* response;
 	//get initial network data.
 	//acquire semaphore
+	sem_wait(&sem);
 	for(int i = 0; i < stocks.size(); i++)
 	{
 		for (int j = 0; j < stocks[i]->getNumDataSeries(); j++)
@@ -215,9 +353,12 @@ void* networkThread(void* arg)
 			//free memory
 			delete response->memory;
 			curSeries->data = root;
+			//set data changed flag.
+			curSeries->dataChanged = true;
 		}
 	}
 	//release semaphore.
+	sem_post(&sem);
 	while (!interrupt_received)
 	{
 		//Cron loop
@@ -246,7 +387,12 @@ void* networkThread(void* arg)
 					}
 					//free memory
 					delete response->memory;
+					//Acquire Semaphore
+					sem_wait(&sem);
 					curSeries->data = root;
+					curSeries->dataChanged = true;
+					//release Semaphore
+					sem_post(&sem);
 					curSeries->cronCounter = 0;
 				}
 			}
