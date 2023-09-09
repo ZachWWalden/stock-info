@@ -165,6 +165,9 @@ int main(int argc, char *argv[]) {
   long unsigned int tid;
   pthread_create(&tid, NULL, networkThread, &tid);
 
+  //hackerman hack to ensure the networkThread gets the lock first. hehe
+  usleep(1000000);
+
   int animationCounter = 0;
   int i = 0, j = 0;
 
