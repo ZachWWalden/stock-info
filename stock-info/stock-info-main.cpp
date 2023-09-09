@@ -139,8 +139,6 @@ int main(int argc, char *argv[]) {
   //build stock data structure.
   //allocate memory for stocks vector based on number of stocks.
   Json::Value stocksJson = root["stocks"];
-  //Resize stock vector based on the number of stocks in the configuration file.
-  stocks.resize(stocksJson.size());
   for(int i = 0; i < stocksJson.size(); ++i)
   {
 	Json::Value curStock = stocksJson[i];
@@ -157,6 +155,7 @@ int main(int argc, char *argv[]) {
 		newSeries->function = ZwStock::ApiFunction::TIME_SERIES_INTRADAY;
 		newSeries->NUM_CRON_STEPS = getNumCronSteps(curSeries) * curSeries["update_interval"].asInt();
 		newSeries->interval = curSeries["interval"].asString();
+		newStock->addDataSeries(newSeries);
 
 	}
 	stocks.push_back(newStock);
