@@ -12,7 +12,6 @@
 #include <signal.h>
 #include <string>
 #include <pthread.h>
-#include <semaphore.h>
 #include <jsoncpp/json/json.h>
 #include <fstream>
 #include <iostream>
@@ -75,7 +74,7 @@ int getNumCronSteps(Json::Value series)
 	return unitCronSteps;
 }
 
-sem_t sem;
+pthread_mutex_t lock;
 
 /*
 static void Fill(uint8_t* frmBuff, uint8_t red, uint8_t green, uint8_t blue)
@@ -113,9 +112,9 @@ int main(int argc, char *argv[]) {
   signal(SIGTERM, InterruptHandler);
   signal(SIGINT, InterruptHandler);
 
-  if(sem_init(&sem, 0, 0))
+  if(pthread_mutex_init(&lock, NULL) != 0)
   {
-	LOG("Failed to initialize semaphore");
+	LOG("Failed to initialize mutex");
 	return EXIT_FAILURE;
   }
 
@@ -196,7 +195,7 @@ int main(int argc, char *argv[]) {
 			animationCounter++;
 		}
 		//Acquire semaphore
-		sem_wait(&sem);
+		pthread_mutex_lock(&lock);
 		if (stocks[i]->getData(j)->dataChanged) //If graphs are to be added following the current price, this index will be j + j % 2
 		{
 			ZwGraphics::Scene* curScene;
@@ -297,7 +296,7 @@ int main(int argc, char *argv[]) {
 		}
 		stocks[i]->getScene(j)->draw();
 		//release semaphore
-		sem_post(&sem);
+		pthread_mutex_unlock(&lock);
 	//}
 	graphics_mgr.draw();
 	//measure time at end
@@ -329,7 +328,7 @@ void* networkThread(void* arg)
     ZwNetwork::Response* response;
 	//get initial network data.
 	//acquire semaphore
-	sem_wait(&sem);
+	pthread_mutex_lock(&lock);
 	for(int i = 0; i < stocks.size(); i++)
 	{
 		for (int j = 0; j < stocks[i]->getNumDataSeries(); j++)
@@ -355,7 +354,7 @@ void* networkThread(void* arg)
 		}
 	}
 	//release semaphore.
-	sem_post(&sem);
+	pthread_mutex_unlock(&lock);
 	while (!interrupt_received)
 	{
 		//Cron loop
@@ -385,11 +384,11 @@ void* networkThread(void* arg)
 					//free memory
 					delete response->memory;
 					//Acquire Semaphore
-					sem_wait(&sem);
+					pthread_mutex_lock(&lock);
 					curSeries->data = root;
 					curSeries->dataChanged = true;
 					//release Semaphore
-					sem_post(&sem);
+					pthread_mutex_unlock(&lock);
 					curSeries->cronCounter = 0;
 				}
 			}
