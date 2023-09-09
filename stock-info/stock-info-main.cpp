@@ -366,7 +366,7 @@ void* networkThread(void* arg)
 		{
 			for (int j = 0; j < stocks[i]->getNumDataSeries(); j++)
 			{
-				ZwStock::SeriesData* curSeries = stocks[i]->getData(i);
+				ZwStock::SeriesData* curSeries = stocks[i]->getData(j);
 				curSeries->cronCounter++;
 				//if cron counter == NUM_CRON_STEPS
 				if(curSeries->cronCounter == curSeries->NUM_CRON_STEPS)
