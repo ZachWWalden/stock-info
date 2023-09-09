@@ -81,6 +81,7 @@ public:
 
 	static std::size_t WriteCallback(void* received_data, std::size_t size, std::size_t nmemb, void* userdata);
 
+	std::string getURL();
 	void setURL(std::string url);
 	void buildURL(std::string ticker, ZwStock::ApiFunction apiFunction, std::string interval);
 

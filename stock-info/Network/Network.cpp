@@ -98,6 +98,11 @@ std::size_t Network::WriteCallback(void* received_data, std::size_t size, std::s
 	return realsize;
 }
 
+std::string Network::getURL()
+{
+	return this->url;
+}
+
 void Network::setURL(std::string url)
 {
 	this->url = url;
