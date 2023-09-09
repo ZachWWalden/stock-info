@@ -149,7 +149,7 @@ int main(int argc, char *argv[]) {
 
 	for(int j = 0; j < seriesJson.size(); ++j)
 	{
-		Json::Value curSeries = seriesJson[i];
+		Json::Value curSeries = seriesJson[j];
 		ZwStock::SeriesData* newSeries = new ZwStock::SeriesData();
 		//TODO un hardcode
 		newSeries->function = ZwStock::ApiFunction::TIME_SERIES_INTRADAY;
