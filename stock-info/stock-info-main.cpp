@@ -380,13 +380,14 @@ void* networkThread(void* arg)
 			}
 			//free memory
 			delete response->memory;
+			response->memory = malloc(0)
 			LOG("NET: init resp mem freed");
 			curSeries->data = root;
 			//set data changed flag.
 			curSeries->dataChanged = true;
-			LOG(curSeries->data);
 		}
 	}
+	usleep(10000000);
 	//release semaphore.
 	pthread_mutex_unlock(&lock);
 	LOG("NET: init lock released");
