@@ -370,7 +370,6 @@ void* networkThread(void* arg)
 			LOG(network.getURL());
 			response = network.makeRequest();
 			LOG("NET: init Req success");
-			LOG(response->memory);
 			//marshall json
 			Json::Value root;
 			Json::CharReaderBuilder builder;
@@ -429,7 +428,9 @@ void* networkThread(void* arg)
 						LOG(errs);
 					}
 					//free memory
-					delete response->memory;
+					free(response->memory);
+					response->memory = (char*)malloc(0);
+					response->size = 0;
 					LOG("NET: resp mem freed");
 					//Acquire Semaphore
 					pthread_mutex_lock(&lock);
