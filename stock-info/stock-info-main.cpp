@@ -349,8 +349,7 @@ void* networkThread(void* arg)
 	LOG("NET: Got mutex");
 	for(int i = 0; i < stocks.size(); i++)
 	{
-		LOGV("NET: i", i);
-		LOGV("NET: j", j);
+		LOGV("NET: init i", i);
 		for (int j = 0; j < stocks[i]->getNumDataSeries(); j++)
 		{
 			ZwStock::SeriesData* curSeries = stocks[i]->getData(i);
@@ -387,7 +386,6 @@ void* networkThread(void* arg)
 		for(int i = 0; i < stocks.size(); i++)
 		{
 			LOGV("NET: i", i);
-			LOGV("NET: j", j);
 			for (int j = 0; j < stocks[i]->getNumDataSeries(); j++)
 			{
 				ZwStock::SeriesData* curSeries = stocks[i]->getData(j);
