@@ -235,7 +235,10 @@ int main(int argc, char *argv[]) {
 					{
 						ochlv = data[k];
 						prices[k] = ochlv["4. close"].asFloat();
+						LOGV("MAIN: k = ", k);
+						LOGV("MAIN: Price = ", prices[k]);
 					}
+					usleep(100000000);
 				//}
 				ZwGraphics::Color stkColor = ZwGraphics::Graphics::WHITE;
 				//calculate did it go up or down?
