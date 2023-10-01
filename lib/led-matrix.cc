@@ -300,7 +300,7 @@ RGBMatrix::Options::Options() :
 #endif
 
 #ifdef SHOW_REFRESH_RATE
-    show_refresh_rate(true),
+    show_refresh_rate(false),
 #else
     show_refresh_rate(false),
 #endif
