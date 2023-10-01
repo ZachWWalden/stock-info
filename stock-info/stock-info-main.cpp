@@ -370,6 +370,7 @@ void* networkThread(void* arg)
 			LOG(network.getURL());
 			response = network.makeRequest();
 			LOG("NET: init Req success");
+			LOG(response->memory);
 			//marshall json
 			Json::Value root;
 			Json::CharReaderBuilder builder;
