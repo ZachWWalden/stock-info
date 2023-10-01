@@ -388,6 +388,7 @@ void* networkThread(void* arg)
 			curSeries->data = root;
 			//set data changed flag.
 			curSeries->dataChanged = true;
+			LOGV("NET: Resp Size = ", response->size);
 		}
 	}
 	usleep(10000000);
