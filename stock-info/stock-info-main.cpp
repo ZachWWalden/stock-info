@@ -282,6 +282,7 @@ int main(int argc, char *argv[]) {
 				//{
 					LOG("MAIN: Getting Prices");
 					Json::Value data = stocks[i]->getData(j)->data;
+					LOG(stocks[i]->getData(j)->data);
 					LOG("MAIN: Got prices");
 					data = data["Time Series (" + stocks[i]->getData(j)->interval + ")"];
 					LOG("MAIN: Got interval");
