@@ -227,19 +227,16 @@ int main(int argc, char *argv[]) {
 				//{
 					LOG("MAIN: Getting Prices");
 					Json::Value data = stocks[i]->getData(j)->data;
-					LOG(stocks[i]->getData(j)->data);
 					LOG("MAIN: Got prices");
-					LOG(data);
 					data = data["Time Series (" + stocks[i]->getData(j)->interval + ")"];
-					LOG(data);
 					LOG("MAIN: Got interval");
 					Json::Value ochlv;
 					Json::ValueIterator itr = data.begin();
 					for(int k = 0; k < 2; k++)
 					{
 						ochlv = *itr;
-						LOG(ochlv);
-						prices[k] = ochlv["4. close"].asFloat();
+						std::string price = ochlv["4. close"].asString();
+						prices[k] = std::stof(price);
 						LOGV("MAIN: k = ", k);
 						LOGV("MAIN: Price = ", prices[k]);
 						itr++;
