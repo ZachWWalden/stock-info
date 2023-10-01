@@ -378,6 +378,7 @@ void* networkThread(void* arg)
 			if(!reader->parse(response->memory, response->memory + response->size, &root, &errs))
 			{
 				LOG("init error parsing network json");
+				LOG(errs);
 			}
 			//free memory
 			delete response->memory;
@@ -421,6 +422,7 @@ void* networkThread(void* arg)
 					if(!reader->parse(response->memory, response->memory + response->size, &root, &errs))
 					{
 						LOG("error parsing network json");
+						LOG(errs);
 					}
 					//free memory
 					delete response->memory;
