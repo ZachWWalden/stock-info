@@ -367,6 +367,7 @@ void* networkThread(void* arg)
 			//get data from network.
 			network.buildURL(stocks[i]->getTicker(), curSeries->function, curSeries->interval);
 			LOG("NET: init URL built");
+			LOG(network.getURL());
 			response = network.makeRequest();
 			LOG("NET: init Req success");
 			//marshall json
@@ -380,7 +381,6 @@ void* networkThread(void* arg)
 			}
 			//free memory
 			delete response->memory;
-			response->memory = (char*)malloc(0);
 			LOG("NET: init resp mem freed");
 			curSeries->data = root;
 			//set data changed flag.
