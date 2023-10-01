@@ -149,12 +149,15 @@ int main(int argc, char *argv[]) {
 
 	for(int j = 0; j < seriesJson.size(); ++j)
 	{
+		LOGV("MAIN init i = ", i);
+		LOGV("MAIN init j = ", j);
 		Json::Value curSeries = seriesJson[j];
 		ZwStock::SeriesData* newSeries = new ZwStock::SeriesData();
 		//TODO un hardcode
 		newSeries->function = ZwStock::ApiFunction::TIME_SERIES_INTRADAY;
 		newSeries->NUM_CRON_STEPS = getNumCronSteps(curSeries) * curSeries["update_interval"].asInt();
 		newSeries->interval = curSeries["interval"].asString();
+		LOG(curSeries["interval"].asString());
 		newStock->addDataSeries(newSeries);
 
 	}
@@ -349,9 +352,10 @@ void* networkThread(void* arg)
 	LOG("NET: Got mutex");
 	for(int i = 0; i < stocks.size(); i++)
 	{
-		LOGV("NET: init i", i);
+		LOGV("NET: init i = ", i);
 		for (int j = 0; j < stocks[i]->getNumDataSeries(); j++)
 		{
+			LOGV("NET: init j = ", j);
 			ZwStock::SeriesData* curSeries = stocks[i]->getData(i);
 			LOG("NET: init got data series information");
 			//get data from network.
@@ -388,6 +392,7 @@ void* networkThread(void* arg)
 			LOGV("NET: i", i);
 			for (int j = 0; j < stocks[i]->getNumDataSeries(); j++)
 			{
+				LOGV("NET: init j = ", j);
 				ZwStock::SeriesData* curSeries = stocks[i]->getData(j);
 				LOG("NET: got data series information");
 				curSeries->cronCounter++;
