@@ -11,10 +11,12 @@
 #include <stdio.h>
 #include <signal.h>
 #include <string>
+#include <sstream>
 #include <pthread.h>
 #include <jsoncpp/json/json.h>
 #include <fstream>
 #include <iostream>
+#include <iomanip>
 #include <vector>
 #include <chrono>
 
@@ -216,7 +218,8 @@ int main(int argc, char *argv[]) {
 			//cases: no scenes, scenes.
 			if (stocks[i]->getNumScenes() == 0)
 			{
-				LOG("MAIN: no scenes");				curScene = new ZwGraphics::Scene(&graphics_mgr, V_RES, H_RES, NUM_CHANNELS);
+				LOG("MAIN: no scenes");
+				curScene = new ZwGraphics::Scene(&graphics_mgr, V_RES, H_RES, NUM_CHANNELS);
 				//add in ticker, scene element.
 				curScene->addElement(new ZwGraphics::StringSceneElement(&graphics_mgr, ZwGraphics::Point(H_RES - stocks[i]->getTicker().length()*9, 0), (char*)stocks[i]->getTicker().c_str(), font916, ZwGraphics::Graphics::WHITE));
 				//Load and add the sprite
@@ -253,15 +256,17 @@ int main(int argc, char *argv[]) {
 					stkColor = ZwGraphics::Graphics::RED;
 				}
 				//convert price to string.
-				std::string price = std::to_string(prices[0]);
+				std::stringstream strm;
+				strm << std::fixed << std::setprecision(2) << prices[0];
+				std::string price = strm.str();
 				ZwGraphics::Font font = font79;
 				//will string not fit in screen???
-				if(price.length()*font.width > H_RES)
+				if((price.length() + 1)*font.width > H_RES)
 				{
 					font = graphics_mgr.fontFactory(ZwGraphics::Font4x6);
 				}
 				//add string scene element
-				curScene->addElement(new ZwGraphics::StringSceneElement(&graphics_mgr, ZwGraphics::Point(H_RES - price.length()*font.width, V_RES - font.num_rows), (char*)price.c_str(), font, stkColor));
+				curScene->addElement(new ZwGraphics::StringSceneElement(&graphics_mgr, ZwGraphics::Point(H_RES - (price.length() + 1)*font.width, V_RES - font.num_rows), (char*)((std::string)"$" + price).c_str(), font, stkColor));
 				curScene->draw();
 				stocks[i]->addScene(curScene);
 				LOG("MAIN: No Scenes: Scene Added");
@@ -307,15 +312,17 @@ int main(int argc, char *argv[]) {
 					stkColor = ZwGraphics::Graphics::RED;
 				}
 				//convert price to string.
-				std::string price = std::to_string(prices[0]);
+				std::stringstream strm;
+				strm << std::fixed << std::setprecision(2) << prices[0];
+				std::string price = strm.str();
 				ZwGraphics::Font font = font79;
 				//will string not fit in screen???
-				if(price.length()*font.width > H_RES)
+				if((price.length() + 1)*font.width > H_RES)
 				{
 					font = graphics_mgr.fontFactory(ZwGraphics::Font4x6);
 				}
 				//add string scene element
-				curScene->addElement(new ZwGraphics::StringSceneElement(&graphics_mgr, ZwGraphics::Point(H_RES - price.length()*font.width, V_RES - font.num_rows), (char*)price.c_str(), font, stkColor));
+				curScene->addElement(new ZwGraphics::StringSceneElement(&graphics_mgr, ZwGraphics::Point(H_RES - (price.length() + 1)*font.width, V_RES - font.num_rows), (char*)((std::string)"$" + price).c_str(), font, stkColor));
 				curScene->draw();
 			}
 			stocks[i]->getData(j)->dataChanged = false;
