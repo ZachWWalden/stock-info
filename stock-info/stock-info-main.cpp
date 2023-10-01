@@ -227,9 +227,9 @@ int main(int argc, char *argv[]) {
 				//{
 					LOG("MAIN: Getting Prices");
 					Json::Value data = stocks[i]->getData(j)->data;
+					LOG(data);
 					LOG("MAIN: Got prices");
 					data = data["Time Series (" + stocks[i]->getData(j)->interval + ")"];
-					LOG(data);
 					LOG("MAIN: Got interval");
 					Json::Value ochlv;
 					for(int k = 0; k < 2; k++)
