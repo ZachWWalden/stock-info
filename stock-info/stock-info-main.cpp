@@ -190,7 +190,7 @@ int main(int argc, char *argv[]) {
 				LOG("MAIN; j reset");
 				i++;
 				j = 0;
-				if (i == stocks.size() - 1)
+				if (i == stocks.size())
 				{
 					i = 0;
 					LOG("MAIN: i reset");
