@@ -63,8 +63,14 @@ Network::~Network()
 //NOTE the call to curl_easy_perform() will block until the ENTIRE request is complete. This includesthe call to the WRITE callback. This allows the return, and ownership transfer of the memory allocated inside the callback to the caller of makeRequest()
 Response* Network::makeRequest()
 {
-	curl_easy_setopt(this->curl, CURLOPT_URL, this->url.c_str());
-	CURLcode res = curl_easy_perform(this->curl);
+	CURLcode res = curl_easy_setopt(this->curl, CURLOPT_URL, this->url.c_str());
+	if(res != CURLE_OK)
+	{
+		LOG("URL Set Failed");
+		LOG(this->url);
+		return nullptr;
+	}
+	res = curl_easy_perform(this->curl);
 
 	if(res != CURLE_OK) //CURLE_OK is definded as 0
 	{
