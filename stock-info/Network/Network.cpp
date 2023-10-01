@@ -101,6 +101,8 @@ std::size_t Network::WriteCallback(void* received_data, std::size_t size, std::s
 	mem->size += realsize;
 	mem->memory[mem->size] = 0;
 
+	LOG(mem->memory);
+
 	return realsize;
 }
 
