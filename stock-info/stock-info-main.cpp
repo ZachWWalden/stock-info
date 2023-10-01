@@ -356,7 +356,7 @@ void* networkThread(void* arg)
 		for (int j = 0; j < stocks[i]->getNumDataSeries(); j++)
 		{
 			LOGV("NET: init j = ", j);
-			ZwStock::SeriesData* curSeries = stocks[i]->getData(i);
+			ZwStock::SeriesData* curSeries = stocks[i]->getData(j);
 			LOG("NET: init got data series information");
 			//get data from network.
 			network.buildURL(stocks[i]->getTicker(), curSeries->function, curSeries->interval);
@@ -373,8 +373,8 @@ void* networkThread(void* arg)
 				LOG("init error parsing network json");
 			}
 			//free memory
-			//delete response->memory;
-			//LOG("NET: init resp mem freed");
+			delete response->memory;
+			LOG("NET: init resp mem freed");
 			curSeries->data = root;
 			//set data changed flag.
 			curSeries->dataChanged = true;
