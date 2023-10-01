@@ -196,16 +196,21 @@ int main(int argc, char *argv[]) {
 		{
 			animationCounter++;
 		}
+		LOGV("MAIN: i",i);
+		LOGV("MAIN: j",j);
+		LOGV("MAIN: ani Count",animationCounter);
 		//Acquire semaphore
 		pthread_mutex_lock(&lock);
+		LOG("MAIN get semaphore");
 		if (stocks[i]->getData(j)->dataChanged) //If graphs are to be added following the current price, this index will be j + j % 2
 		{
+			LOG("MAIN: Data CHanged, building scenes");
 			ZwGraphics::Scene* curScene;
 			//build scene.
 			//cases: no scenes, scenes.
 			if (stocks[i]->getNumScenes() == 0)
 			{
-				curScene = new ZwGraphics::Scene(&graphics_mgr, V_RES, H_RES, NUM_CHANNELS);
+				LOG("MAIN: no scenes");				curScene = new ZwGraphics::Scene(&graphics_mgr, V_RES, H_RES, NUM_CHANNELS);
 				//add in ticker, scene element.
 				curScene->addElement(new ZwGraphics::StringSceneElement(&graphics_mgr, ZwGraphics::Point(H_RES - stocks[i]->getTicker().length()*9, 0), (char*)stocks[i]->getTicker().c_str(), font916, ZwGraphics::Graphics::WHITE));
 				//Load and add the sprite
@@ -214,9 +219,11 @@ int main(int argc, char *argv[]) {
 				//get price from data.
 				float prices[2];
 				//{
+					LOG("MAIN: Getting Prices");
 					Json::Value data = stocks[i]->getData(j)->data;
-					//data = data["Time Series (" + stocks[i]->getData(j)->interval + ")"];
-					data = data[1];
+					LOG("MAIN: Got prices");
+					data = data["Time Series (" + stocks[i]->getData(j)->interval + ")"];
+					LOG("MAIN: Got interval");
 					Json::Value ochlv;
 					for(int k = 0; k < 2; k++)
 					{
@@ -246,10 +253,13 @@ int main(int argc, char *argv[]) {
 				curScene->addElement(new ZwGraphics::StringSceneElement(&graphics_mgr, ZwGraphics::Point(H_RES - price.length()*font.width, V_RES - font.num_rows), (char*)price.c_str(), font, stkColor));
 				curScene->draw();
 				stocks[i]->addScene(curScene);
+				LOG("MAIN: No Scenes: Scene Added");
 			}
 			else
 			{
+				LOG("MAIN: rebuilding Scene");
 				curScene = stocks[i]->getScene(j);
+				LOG("MAIN: Got scene from stocks data structure");
 				//loop through and delete all scene elements except the logo and ticker. Due to how each scene's list of scene elements, the first to items in that list never need to be deleted on a data update.
 				std::vector<ZwGraphics::SceneElement*>* elements = curScene->getElements();
 				for(int k = 2; k < elements->size(); k++)
@@ -262,9 +272,11 @@ int main(int argc, char *argv[]) {
 				//get price from data.
 				float prices[2];
 				//{
+					LOG("MAIN: Getting Prices");
 					Json::Value data = stocks[i]->getData(j)->data;
-					//data = data["Time Series (" + stocks[i]->getData(j)->interval + ")"];
-					data = data[1];
+					LOG("MAIN: Got prices");
+					data = data["Time Series (" + stocks[i]->getData(j)->interval + ")"];
+					LOG("MAIN: Got interval");
 					Json::Value ochlv;
 					for(int k = 0; k < 2; k++)
 					{
@@ -295,8 +307,11 @@ int main(int argc, char *argv[]) {
 				curScene->draw();
 			}
 			stocks[i]->getData(j)->dataChanged = false;
+			LOG("MAIN: DataChanged cleared");
+
 		}
 		stocks[i]->getScene(j)->draw();
+		LOG("MAIN: Scene Drawn");
 		//release semaphore
 		pthread_mutex_unlock(&lock);
 	//}
@@ -331,14 +346,19 @@ void* networkThread(void* arg)
 	//get initial network data.
 	//acquire semaphore
 	pthread_mutex_lock(&lock);
+	LOG("NET: Got mutex");
 	for(int i = 0; i < stocks.size(); i++)
 	{
+		LOGV("NET: i", i);
+		LOGV("NET: j", j);
 		for (int j = 0; j < stocks[i]->getNumDataSeries(); j++)
 		{
 			ZwStock::SeriesData* curSeries = stocks[i]->getData(i);
+			LOG("NET: init got data series information");
 			//get data from network.
 			network.buildURL(stocks[i]->getTicker(), curSeries->function, curSeries->interval);
 			response = network.makeRequest();
+			LOG("NET: init Req success");
 			//marshall json
 			Json::Value root;
 			Json::CharReaderBuilder builder;
@@ -346,10 +366,11 @@ void* networkThread(void* arg)
 			Json::CharReader* reader(builder.newCharReader());
 			if(!reader->parse(response->memory, response->memory + response->size, &root, &errs))
 			{
-				std::cout << "error parsing network json" << std::endl;
+				LOG("init error parsing network json");
 			}
 			//free memory
 			delete response->memory;
+			LOG("NET: init resp mem freed");
 			curSeries->data = root;
 			//set data changed flag.
 			curSeries->dataChanged = true;
@@ -357,6 +378,7 @@ void* networkThread(void* arg)
 	}
 	//release semaphore.
 	pthread_mutex_unlock(&lock);
+	LOG("NET: init lock released");
 	while (!interrupt_received)
 	{
 		//Cron loop
@@ -364,16 +386,21 @@ void* networkThread(void* arg)
 		//loop through stocks and update data accordingly
 		for(int i = 0; i < stocks.size(); i++)
 		{
+			LOGV("NET: i", i);
+			LOGV("NET: j", j);
 			for (int j = 0; j < stocks[i]->getNumDataSeries(); j++)
 			{
 				ZwStock::SeriesData* curSeries = stocks[i]->getData(j);
+				LOG("NET: got data series information");
 				curSeries->cronCounter++;
 				//if cron counter == NUM_CRON_STEPS
 				if(curSeries->cronCounter == curSeries->NUM_CRON_STEPS)
 				{
 					//get data from network.
 					network.buildURL(stocks[i]->getTicker(), curSeries->function, curSeries->interval);
+					LOG("NET: URL Built");
 					response = network.makeRequest();
+					LOG("NET: req Success");
 					//marshall json
 					Json::Value root;
 					Json::CharReaderBuilder builder;
@@ -381,16 +408,19 @@ void* networkThread(void* arg)
 					Json::CharReader* reader(builder.newCharReader());
 					if(!reader->parse(response->memory, response->memory + response->size, &root, &errs))
 					{
-						std::cout << "error parsing network json" << std::endl;
+						LOG("error parsing network json");
 					}
 					//free memory
 					delete response->memory;
+					LOG("NET: resp mem freed");
 					//Acquire Semaphore
 					pthread_mutex_lock(&lock);
+					LOG("NET: lock adquired");
 					curSeries->data = root;
 					curSeries->dataChanged = true;
 					//release Semaphore
 					pthread_mutex_unlock(&lock);
+					LOG("NET: Lock released");
 					curSeries->cronCounter = 0;
 				}
 			}
