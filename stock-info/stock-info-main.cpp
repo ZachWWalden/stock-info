@@ -373,8 +373,8 @@ void* networkThread(void* arg)
 				LOG("init error parsing network json");
 			}
 			//free memory
-			delete response->memory;
-			LOG("NET: init resp mem freed");
+			//delete response->memory;
+			//LOG("NET: init resp mem freed");
 			curSeries->data = root;
 			//set data changed flag.
 			curSeries->dataChanged = true;
