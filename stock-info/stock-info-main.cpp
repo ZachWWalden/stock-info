@@ -227,7 +227,6 @@ int main(int argc, char *argv[]) {
 				//{
 					LOG("MAIN: Getting Prices");
 					Json::Value data = stocks[i]->getData(j)->data;
-					LOG(data);
 					LOG("MAIN: Got prices");
 					data = data["Time Series (" + stocks[i]->getData(j)->interval + ")"];
 					LOG("MAIN: Got interval");
@@ -385,6 +384,7 @@ void* networkThread(void* arg)
 			curSeries->data = root;
 			//set data changed flag.
 			curSeries->dataChanged = true;
+			LOG(curSeries->data);
 		}
 	}
 	//release semaphore.
