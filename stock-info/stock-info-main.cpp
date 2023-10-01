@@ -185,7 +185,7 @@ int main(int argc, char *argv[]) {
 			//Increment loop counter
 			j++;
 			LOG(stocks[i]->getNumScenes());
-			if (j == stocks[i]->getNumScenes() - 1)
+			if (j == stocks[i]->getNumScenes())
 			{
 				LOG("MAIN; j reset");
 				i++;
