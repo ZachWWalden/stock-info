@@ -234,13 +234,15 @@ int main(int argc, char *argv[]) {
 					LOG(data);
 					LOG("MAIN: Got interval");
 					Json::Value ochlv;
+					Json::ValueIterator itr = data.begin();
 					for(int k = 0; k < 2; k++)
 					{
-						ochlv = data[k];
+						ochlv = *itr;
 						LOG(ochlv);
 						prices[k] = ochlv["4. close"].asFloat();
 						LOGV("MAIN: k = ", k);
 						LOGV("MAIN: Price = ", prices[k]);
+						itr++;
 					}
 				//}
 				ZwGraphics::Color stkColor = ZwGraphics::Graphics::WHITE;
