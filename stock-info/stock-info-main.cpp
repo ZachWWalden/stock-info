@@ -238,7 +238,6 @@ int main(int argc, char *argv[]) {
 						LOGV("MAIN: k = ", k);
 						LOGV("MAIN: Price = ", prices[k]);
 					}
-					usleep(100000000);
 				//}
 				ZwGraphics::Color stkColor = ZwGraphics::Graphics::WHITE;
 				//calculate did it go up or down?
@@ -391,7 +390,6 @@ void* networkThread(void* arg)
 			LOGV("NET: Resp Size = ", response->size);
 		}
 	}
-	usleep(10000000);
 	//release semaphore.
 	pthread_mutex_unlock(&lock);
 	LOG("NET: init lock released");
