@@ -360,6 +360,7 @@ void* networkThread(void* arg)
 			LOG("NET: init got data series information");
 			//get data from network.
 			network.buildURL(stocks[i]->getTicker(), curSeries->function, curSeries->interval);
+			LOG("NET: init URL built");
 			response = network.makeRequest();
 			LOG("NET: init Req success");
 			//marshall json
