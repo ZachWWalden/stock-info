@@ -233,6 +233,7 @@ int main(int argc, char *argv[]) {
 					Json::Value ochlv;
 					for(int k = 0; k < 2; k++)
 					{
+						LOG(data[k]);
 						ochlv = data[k];
 						prices[k] = ochlv["4. close"].asFloat();
 						LOGV("MAIN: k = ", k);
