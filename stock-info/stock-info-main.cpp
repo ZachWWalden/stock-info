@@ -229,11 +229,11 @@ int main(int argc, char *argv[]) {
 					Json::Value data = stocks[i]->getData(j)->data;
 					LOG("MAIN: Got prices");
 					data = data["Time Series (" + stocks[i]->getData(j)->interval + ")"];
+					LOG(data);
 					LOG("MAIN: Got interval");
 					Json::Value ochlv;
 					for(int k = 0; k < 2; k++)
 					{
-						LOG(data[k]);
 						ochlv = data[k];
 						prices[k] = ochlv["4. close"].asFloat();
 						LOGV("MAIN: k = ", k);
@@ -385,7 +385,6 @@ void* networkThread(void* arg)
 			curSeries->data = root;
 			//set data changed flag.
 			curSeries->dataChanged = true;
-			LOG(root);
 		}
 	}
 	//release semaphore.
