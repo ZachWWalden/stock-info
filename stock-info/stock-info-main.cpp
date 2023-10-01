@@ -380,7 +380,7 @@ void* networkThread(void* arg)
 			}
 			//free memory
 			delete response->memory;
-			response->memory = malloc(0)
+			response->memory = (char*)malloc(0);
 			LOG("NET: init resp mem freed");
 			curSeries->data = root;
 			//set data changed flag.
