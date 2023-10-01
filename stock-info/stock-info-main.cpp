@@ -186,11 +186,13 @@ int main(int argc, char *argv[]) {
 			j++;
 			if (j == stocks[i]->getNumScenes() - 1)
 			{
+				LOG("MAIN; j reset");
 				i++;
 				j = 0;
 				if (i == stocks.size() - 1)
 				{
 					i = 0;
+					LOG("MAIN: i reset");
 				}
 			}
 			animationCounter = 0;
