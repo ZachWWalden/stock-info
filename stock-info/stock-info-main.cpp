@@ -198,17 +198,17 @@ int main(int argc, char *argv[]) {
 
   while(!interrupt_received)
   {
+	if(!semAcquired)
+	{
+		//acquire semaphore
+		pthread_mutex_lock(&lock);
+		LOG("MAIN get semaphore");
+		semAcquired = true;
+	}
 	//measure time at start
 	auto startTime = std::chrono::high_resolution_clock::now();
 	//DO STUFF
 	//{
-		if(!semAcquired)
-		{
-			//acquire semaphore
-			pthread_mutex_lock(&lock);
-			LOG("MAIN get semaphore");
-			semAcquired = true;
-		}
 		if(animationCounter == NUM_FRAMES_PER_SCENE - 1)
 		{
 			LOGV("MAIN: i",i);
