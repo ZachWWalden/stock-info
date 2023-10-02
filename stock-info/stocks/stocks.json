@@ -26,5 +26,18 @@
 				},
 			]
 		},
+		{
+			"ticker" : "TSLA",
+			"image" : "images/default.bmp",
+			"series" : [
+				{
+					"api_func" : "TIME_SERIES_DAILY",
+					"interval" : "30min",
+					"update_interval" : 6,
+					"update_unit" : "hr"
+
+				},
+			]
+		},
 	]
 }
