@@ -60,7 +60,7 @@ static void InterruptHandler(int signo) {
   interrupt_received = true;
 }
 void* networkThread(void* arg);
-int getNumCronSteps(Json::Value series)l
+int getNumCronSteps(Json::Value series)
 {
 	int unitCronSteps = 0;
 	//get unit
