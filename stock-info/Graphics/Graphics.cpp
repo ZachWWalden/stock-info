@@ -483,6 +483,7 @@ void Graphics::PlotSprite(Rectangle rect, uint8_t*** sprite_data)
  ************************************************/
 FontStatus Graphics::PlotChar(Point position, uint8_t letter, Font font, Color color)
 {
+	LOG((char)letter);
 	//Check if the character is off of the screen
 	if(position.x > (this->getWidth() - font.width) || position.y > (this->getHeight() - font.num_rows))
 	{
