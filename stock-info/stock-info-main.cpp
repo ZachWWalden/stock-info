@@ -223,9 +223,11 @@ int main(int argc, char *argv[]) {
 				//add in ticker, scene element.
 				std::string ticker = stocks[i]->getTicker();
 				curScene->addElement(new ZwGraphics::StringSceneElement(&graphics_mgr, ZwGraphics::Point(H_RES - stocks[i]->getTicker().length()*9, 0), (char*)ticker.c_str(), font916, ZwGraphics::Graphics::WHITE));
+				LOG("MAIN: add ticker scene");
 				//Load and add the sprite
 				std::string imagePath = IMAGE_PATH;
 				curScene->addElement(new ZwGraphics::SpriteSceneElement(&graphics_mgr, new ZwGraphics::Sprite(imagePath + stocks[i]->getImagePath(), ZwGraphics::Point(0,0))));
+				LOG("MAIN: add sprite scene");
 				//get price from data.
 				float prices[2];
 				//{
@@ -233,6 +235,7 @@ int main(int argc, char *argv[]) {
 					data = data["Time Series (" + stocks[i]->getData(j)->interval + ")"];
 					Json::Value ochlv;
 					Json::ValueIterator itr = data.begin();
+					LOG("MAIN: begin price extraction");
 					for(int k = 0; k < 2; k++)
 					{
 						ochlv = *itr;
