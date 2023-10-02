@@ -94,7 +94,7 @@ class CharSceneElement : public SceneElement
 class StringSceneElement : public SceneElement
 {
 	private:
-		char* string;
+		const char* string;
 		Font sFont;
 		Color sColor;
 	public:
@@ -102,7 +102,7 @@ class StringSceneElement : public SceneElement
 		{
 
 		}
-		StringSceneElement(Graphics* graphics, Point position, char* string, Font sFont, Color sColor) : SceneElement(graphics, position)
+		StringSceneElement(Graphics* graphics, Point position, const char* string, Font sFont, Color sColor) : SceneElement(graphics, position)
 		{
 			this->string = string;
 			this->sFont = sFont;
