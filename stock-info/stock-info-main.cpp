@@ -351,7 +351,7 @@ int main(int argc, char *argv[]) {
 		pthread_mutex_unlock(&lock);
 		LOG("MAIN: mutex released");
 	//}
-	stocks[i]->getScene(j)->draw();
+	//stocks[i]->getScene(j)->draw();
 	LOG("MAIN: scene drawn");
 	graphics_mgr.draw();
 	//measure time at end
