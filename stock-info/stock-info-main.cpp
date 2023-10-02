@@ -222,6 +222,7 @@ int main(int argc, char *argv[]) {
 				curScene = new ZwGraphics::Scene(&graphics_mgr, V_RES, H_RES, NUM_CHANNELS);
 				//add in ticker, scene element.
 				LOG(stocks[i]->getTicker());
+				LOG(stocks[i]->getTicker().c_str());
 				curScene->addElement(new ZwGraphics::StringSceneElement(&graphics_mgr, ZwGraphics::Point(H_RES - stocks[i]->getTicker().length()*9, 0), (char*)(stocks[i]->getTicker()).c_str(), font916, ZwGraphics::Graphics::WHITE));
 				//Load and add the sprite
 				std::string imagePath = IMAGE_PATH;
