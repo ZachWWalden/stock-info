@@ -41,7 +41,7 @@ using rgb_matrix::Canvas;
 #define WEEK_CRON_STEPS 7*DAY_CRON_STEPS
 #define MONTH_CRON_STEPS 4*WEEK_CRON_STEPS //defined as 4 weeks.
 
-#define NUM_FRAMES_PER_SCENE 240
+#define NUM_FRAMES_PER_SCENE 360
 
 #define CONFIG_PATH "stocks/stocks.json"
 #define IMAGE_PATH "stocks/"
@@ -194,6 +194,7 @@ int main(int argc, char *argv[]) {
 
   int animationCounter = 0;
   int i = 0, j = 0;
+  bool semAcquired = false;
 
   while(!interrupt_received)
   {
@@ -201,6 +202,13 @@ int main(int argc, char *argv[]) {
 	auto startTime = std::chrono::high_resolution_clock::now();
 	//DO STUFF
 	//{
+		if(!semAcquired)
+		{
+			//acquire semaphore
+			pthread_mutex_lock(&lock);
+			LOG("MAIN get semaphore");
+			semAcquired = true;
+		}
 		if(animationCounter == NUM_FRAMES_PER_SCENE - 1)
 		{
 			LOGV("MAIN: i",i);
@@ -220,15 +228,16 @@ int main(int argc, char *argv[]) {
 				}
 			}
 			animationCounter = 0;
+			//release Semaphore
+			pthread_mutex_unlock(&lock);
+			LOG("MAIN: mutex released");
+			semAcquired = false;
 		}
 		else
 		{
 			animationCounter++;
 		}
 		LOGV("MAIN: ani Count",animationCounter);
-		//Acquire semaphore
-		pthread_mutex_lock(&lock);
-		LOG("MAIN get semaphore");
 		if (stocks[i]->getData(j)->dataChanged) //If graphs are to be added following the current price, this index will be j + j % 2
 		{
 			LOG("MAIN: Data CHanged, building scenes");
@@ -350,9 +359,6 @@ int main(int argc, char *argv[]) {
 			stocks[i]->getData(j)->dataChanged = false;
 			LOG("MAIN: DataChanged cleared");
 		}
-		//release semaphore
-		pthread_mutex_unlock(&lock);
-		LOG("MAIN: mutex released");
 	//}
 	stocks[i]->getScene(j)->setRenderTarget();
 	LOG("MAIN: scene drawn");
@@ -385,14 +391,14 @@ void* networkThread(void* arg)
     ZwNetwork::Network network(url);
     ZwNetwork::Response* response;
 	//get initial network data.
-	//acquire semaphore
-	pthread_mutex_lock(&lock);
-	LOG("NET: Got mutex");
 	for(int i = 0; i < stocks.size(); i++)
 	{
 		LOGV("NET: init i = ", i);
 		for (int j = 0; j < stocks[i]->getNumDataSeries(); j++)
 		{
+			//acquire semaphore
+			pthread_mutex_lock(&lock);
+			LOG("NET: Got mutex");
 			LOGV("NET: init j = ", j);
 			ZwStock::SeriesData* curSeries = stocks[i]->getData(j);
 			LOG("NET: init got data series information");
@@ -422,12 +428,13 @@ void* networkThread(void* arg)
 			//set data changed flag.
 			curSeries->dataChanged = true;
 			LOGV("NET: Resp Size = ", response->size);
+			//release semaphore.
+			pthread_mutex_unlock(&lock);
+			LOG("NET: init lock released");
+			netInitComplete = true;
+			usleep(500*1000);
 		}
 	}
-	//release semaphore.
-	pthread_mutex_unlock(&lock);
-	LOG("NET: init lock released");
-	netInitComplete = true;
 	while (!interrupt_received)
 	{
 		//Cron loop
