@@ -279,6 +279,7 @@ int main(int argc, char *argv[]) {
 				std::stringstream strm;
 				strm << std::fixed << std::setprecision(2) << prices[0];
 				std::string price = strm.str();
+				LOGV("MAIN: Price = ", price);
 				ZwGraphics::Font font = font79;
 				//will string not fit in screen???
 				if((price.length() + 1)*font.width > H_RES)
