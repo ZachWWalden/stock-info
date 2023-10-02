@@ -321,8 +321,8 @@ int main(int argc, char *argv[]) {
 			}
 			stocks[i]->getData(j)->dataChanged = false;
 			LOG("MAIN: DataChanged cleared");
-			stocks[i]->getScene(j)->draw();
 		}
+		stocks[i]->getScene(j)->draw();
 		//release semaphore
 		pthread_mutex_unlock(&lock);
 	//}
