@@ -221,8 +221,6 @@ int main(int argc, char *argv[]) {
 				LOG("MAIN: no scenes");
 				curScene = new ZwGraphics::Scene(&graphics_mgr, V_RES, H_RES, NUM_CHANNELS);
 				//add in ticker, scene element.
-				LOG(stocks[i]->getTicker());
-				LOG(stocks[i]->getTicker().c_str());
 				std::string ticker = stocks[i]->getTicker();
 				curScene->addElement(new ZwGraphics::StringSceneElement(&graphics_mgr, ZwGraphics::Point(H_RES - stocks[i]->getTicker().length()*9, 0), (char*)ticker.c_str(), font916, ZwGraphics::Graphics::WHITE));
 				//Load and add the sprite
@@ -231,11 +229,8 @@ int main(int argc, char *argv[]) {
 				//get price from data.
 				float prices[2];
 				//{
-					LOG("MAIN: Getting Prices");
 					Json::Value data = stocks[i]->getData(j)->data;
-					LOG("MAIN: Got prices");
 					data = data["Time Series (" + stocks[i]->getData(j)->interval + ")"];
-					LOG("MAIN: Got interval");
 					Json::Value ochlv;
 					Json::ValueIterator itr = data.begin();
 					for(int k = 0; k < 2; k++)
@@ -243,8 +238,6 @@ int main(int argc, char *argv[]) {
 						ochlv = *itr;
 						std::string price = ochlv["4. close"].asString();
 						prices[k] = std::stof(price);
-						LOGV("MAIN: k = ", k);
-						LOGV("MAIN: Price = ", prices[k]);
 						itr++;
 					}
 				//}
@@ -291,17 +284,15 @@ int main(int argc, char *argv[]) {
 				//get price from data.
 				float prices[2];
 				//{
-					LOG("MAIN: Getting Prices");
 					Json::Value data = stocks[i]->getData(j)->data;
-					LOG(stocks[i]->getData(j)->data);
-					LOG("MAIN: Got prices");
 					data = data["Time Series (" + stocks[i]->getData(j)->interval + ")"];
-					LOG("MAIN: Got interval");
 					Json::Value ochlv;
+					Json::ValueIterator itr = data.begin();
 					for(int k = 0; k < 2; k++)
 					{
-						ochlv = data[k];
+						ochlv = *itr;
 						prices[k] = ochlv["4. close"].asFloat();
+						itr++;
 					}
 				//}
 				ZwGraphics::Color stkColor = ZwGraphics::Graphics::WHITE;
@@ -330,10 +321,8 @@ int main(int argc, char *argv[]) {
 			}
 			stocks[i]->getData(j)->dataChanged = false;
 			LOG("MAIN: DataChanged cleared");
-
+			stocks[i]->getScene(j)->draw();
 		}
-		stocks[i]->getScene(j)->draw();
-		LOG("MAIN: Scene Drawn");
 		//release semaphore
 		pthread_mutex_unlock(&lock);
 	//}
