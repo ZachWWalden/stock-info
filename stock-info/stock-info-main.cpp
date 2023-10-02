@@ -237,6 +237,8 @@ int main(int argc, char *argv[]) {
 		{
 			animationCounter++;
 		}
+		if(semAcquired)
+		{
 		LOGV("MAIN: ani Count",animationCounter);
 		if (stocks[i]->getData(j)->dataChanged) //If graphs are to be added following the current price, this index will be j + j % 2
 		{
@@ -360,7 +362,8 @@ int main(int argc, char *argv[]) {
 			LOG("MAIN: DataChanged cleared");
 		}
 	//}
-	stocks[i]->getScene(j)->setRenderTarget();
+			stocks[i]->getScene(j)->setRenderTarget();
+		}
 	LOG("MAIN: scene drawn");
 	graphics_mgr.draw();
 	//measure time at end
