@@ -418,6 +418,7 @@ void* networkThread(void* arg)
 			response->size = 0;
 			LOG("NET: init resp mem freed");
 			curSeries->data = root;
+			LOG(root);
 			//set data changed flag.
 			curSeries->dataChanged = true;
 			LOGV("NET: Resp Size = ", response->size);
