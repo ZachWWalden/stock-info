@@ -2,6 +2,7 @@
 #include "Graphics.hpp"
 #include "stdlib.h"
 #include <cmath>
+#include <sys/types.h>
 
 #include "../Logging/Logging.hpp"
 
@@ -519,7 +520,7 @@ FontStatus Graphics::PlotChar(Point position, uint8_t letter, Font font, Color c
  ************************************************/
 FontStatus Graphics::PlotString(Point position, char *string, Font font, Color color){
     FontStatus error_code=FontSuccess;
-
+	LOG(string);
     while(*string) // will loop until NULL is reached (0x00)
     {
         error_code=this->PlotChar(position, *string, font, color); // write the current character to the screen
