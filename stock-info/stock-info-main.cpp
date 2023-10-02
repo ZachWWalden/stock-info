@@ -322,10 +322,10 @@ int main(int argc, char *argv[]) {
 			stocks[i]->getData(j)->dataChanged = false;
 			LOG("MAIN: DataChanged cleared");
 		}
-		stocks[i]->getScene(j)->draw();
 		//release semaphore
 		pthread_mutex_unlock(&lock);
 	//}
+	stocks[i]->getScene(j)->draw();
 	graphics_mgr.draw();
 	//measure time at end
 	auto endTime = std::chrono::high_resolution_clock::now();
