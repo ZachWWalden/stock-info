@@ -60,7 +60,7 @@ static void InterruptHandler(int signo) {
   interrupt_received = true;
 }
 void* networkThread(void* arg);
-int getNumCronSteps(Json::Value series)
+int getNumCronSteps(Json::Value series)l
 {
 	int unitCronSteps = 0;
 	//get unit
@@ -259,6 +259,7 @@ int main(int argc, char *argv[]) {
 					for(int k = 0; k < 2; k++)
 					{
 						ochlv = *itr;
+						log(ochlv);
 						std::string price = ochlv["4. close"].asString();
 						prices[k] = std::stof(price);
 						itr++;
