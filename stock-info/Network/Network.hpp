@@ -67,7 +67,7 @@ private:
 	std::string url;
 	std::string BASE_URL = "https://www.alphavantage.co/query?function=";
 	std::string SYMBOL = "&symbol=", INTERVAL = "&interval=",API_KEY = "&apikey=4ZE3A29HU6PM9YSU";
-	std::string TS_INTRADAY = "TIME_SERIES_INTRADAY", TS_WEEKLY = "TIME_SERIES_WEEKLY", TS_MONTHLY = "TIME_SERIES_MONTHLY";
+	std::string TS_INTRADAY = "TIME_SERIES_INTRADAY", TS_WEEKLY = "TIME_SERIES_WEEKLY", TS_MONTHLY = "TIME_SERIES_MONTHLY", TS_DAILY = "TIME_SERIES_DAILY";
 	Response* response = new Response();
 
 	char errorBuffer[CURL_ERROR_SIZE + 10];

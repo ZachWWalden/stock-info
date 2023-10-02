@@ -54,6 +54,8 @@ enum CronStepEnum
 std::vector<ZwStock::Stock*> stocks;
 
 volatile bool interrupt_received = false;
+volatile bool netInitComplete = false;
+
 static void InterruptHandler(int signo) {
   interrupt_received = true;
 }
@@ -74,6 +76,21 @@ int getNumCronSteps(Json::Value series)
 		unitCronSteps = HR_CRON_STEPS;
 
 	return unitCronSteps;
+}
+ZwStock::ApiFunction getTimeSeries(Json::Value series)
+{
+	ZwStock::ApiFunction func;
+	if(series["api_func"].asString().compare("TIME_SERIES_INTRADAY") == 0)
+		func = ZwStock::ApiFunction::TIME_SERIES_INTRADAY;
+	else if(series["api_func"].asString().compare("TIME_SERIES_DAILY") == 0)
+		func = ZwStock::ApiFunction::TIME_SERIES_DAILY;
+	else if(series["api_func"].asString().compare("TIME_SERIES_WEEKLY") == 0)
+		func = ZwStock::ApiFunction::TIME_SERIES_WEEKLY;
+	else if(series["api_func"].asString().compare("TIME_SERIES_MONTHLY") == 0)
+		func = ZwStock::ApiFunction::TIME_SERIES_MONTHLY;
+
+	return func;
+
 }
 
 pthread_mutex_t lock;
@@ -156,7 +173,7 @@ int main(int argc, char *argv[]) {
 		Json::Value curSeries = seriesJson[j];
 		ZwStock::SeriesData* newSeries = new ZwStock::SeriesData();
 		//TODO un hardcode
-		newSeries->function = ZwStock::ApiFunction::TIME_SERIES_INTRADAY;
+		newSeries->function = getTimeSeries(curSeries);
 		newSeries->NUM_CRON_STEPS = getNumCronSteps(curSeries) * curSeries["update_interval"].asInt();
 		newSeries->interval = curSeries["interval"].asString();
 		LOG(curSeries["interval"].asString());
@@ -170,8 +187,10 @@ int main(int argc, char *argv[]) {
   long unsigned int tid;
   pthread_create(&tid, NULL, networkThread, &tid);
 
-  //hackerman hack to ensure the networkThread gets the lock first. hehe
-  usleep(1000000);
+  //ensure networkThread gets the mutex first.
+  while(!netInitComplete)
+  {
+  }
 
   int animationCounter = 0;
   int i = 0, j = 0;
@@ -184,6 +203,8 @@ int main(int argc, char *argv[]) {
 	//{
 		if(animationCounter == NUM_FRAMES_PER_SCENE - 1)
 		{
+			LOGV("MAIN: i",i);
+			LOGV("MAIN: j",j);
 			//Increment loop counter
 			j++;
 			LOG(stocks[i]->getNumScenes());
@@ -204,8 +225,6 @@ int main(int argc, char *argv[]) {
 		{
 			animationCounter++;
 		}
-		LOGV("MAIN: i",i);
-		LOGV("MAIN: j",j);
 		LOGV("MAIN: ani Count",animationCounter);
 		//Acquire semaphore
 		pthread_mutex_lock(&lock);
@@ -232,7 +251,8 @@ int main(int argc, char *argv[]) {
 				float prices[2];
 				//{
 					Json::Value data = stocks[i]->getData(j)->data;
-					data = data["Time Series (" + stocks[i]->getData(j)->interval + ")"];
+					//TODO un hardcode
+					data = data["Time Series (Daily)"];
 					Json::Value ochlv;
 					Json::ValueIterator itr = data.begin();
 					LOG("MAIN: begin price extraction");
@@ -289,7 +309,7 @@ int main(int argc, char *argv[]) {
 				float prices[2];
 				//{
 					Json::Value data = stocks[i]->getData(j)->data;
-					data = data["Time Series (" + stocks[i]->getData(j)->interval + ")"];
+					data = data["Time Series (Daily)"];
 					Json::Value ochlv;
 					Json::ValueIterator itr = data.begin();
 					for(int k = 0; k < 2; k++)
@@ -328,8 +348,10 @@ int main(int argc, char *argv[]) {
 		}
 		//release semaphore
 		pthread_mutex_unlock(&lock);
+		LOG("MAIN: mutex released");
 	//}
 	stocks[i]->getScene(j)->draw();
+	LOG("MAIN: scene drawn");
 	graphics_mgr.draw();
 	//measure time at end
 	auto endTime = std::chrono::high_resolution_clock::now();
@@ -400,6 +422,7 @@ void* networkThread(void* arg)
 	//release semaphore.
 	pthread_mutex_unlock(&lock);
 	LOG("NET: init lock released");
+	netInitComplete = true;
 	while (!interrupt_received)
 	{
 		//Cron loop
@@ -407,10 +430,10 @@ void* networkThread(void* arg)
 		//loop through stocks and update data accordingly
 		for(int i = 0; i < stocks.size(); i++)
 		{
-			LOGV("NET: i", i);
+			LOGV("NET: i = ", i);
 			for (int j = 0; j < stocks[i]->getNumDataSeries(); j++)
 			{
-				LOGV("NET: init j = ", j);
+				LOGV("NET: j = ", j);
 				ZwStock::SeriesData* curSeries = stocks[i]->getData(j);
 				LOG("NET: got data series information");
 				curSeries->cronCounter++;

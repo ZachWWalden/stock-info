@@ -5,10 +5,10 @@
 			"image" : "images/nflx.bmp",
 			"series" : [
 				{
-					"api_func" : "TIME_SERIES_INTRADAY",
+					"api_func" : "TIME_SERIES_DAILY",
 					"interval" : "30min",
-					"update_interval" : 30,
-					"update_unit" : "m"
+					"update_interval" : 6,
+					"update_unit" : "hr"
 
 				},
 			]
@@ -18,10 +18,10 @@
 			"image" : "images/aapl.bmp",
 			"series" : [
 				{
-					"api_func" : "TIME_SERIES_INTRADAY",
+					"api_func" : "TIME_SERIES_DAILY",
 					"interval" : "30min",
-					"update_interval" : 30,
-					"update_unit" : "m"
+					"update_interval" : 6,
+					"update_unit" : "hr"
 
 				},
 			]
