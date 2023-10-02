@@ -255,6 +255,7 @@ int main(int argc, char *argv[]) {
 					data = data["Time Series (Daily)"];
 					Json::Value ochlv;
 					Json::ValueIterator itr = data.end();
+					itr--;
 					LOG("MAIN: begin price extraction");
 					for(int k = 0; k < 2; k++)
 					{
@@ -314,6 +315,7 @@ int main(int argc, char *argv[]) {
 					data = data["Time Series (Daily)"];
 					Json::Value ochlv;
 					Json::ValueIterator itr = data.end();
+					itr--;
 					for(int k = 0; k < 2; k++)
 					{
 						ochlv = *itr;
