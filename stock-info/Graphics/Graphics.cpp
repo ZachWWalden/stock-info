@@ -517,7 +517,7 @@ FontStatus Graphics::PlotChar(Point position, uint8_t letter, Font font, Color c
 /************************************************
  * WriteString Function - function plots a string *
  ************************************************/
-FontStatus Graphics::PlotString(Point position, char *string, Font font, Color color){
+FontStatus Graphics::PlotString(Point position, const char *string, Font font, Color color){
     FontStatus error_code=FontSuccess;
     while(*string) // will loop until NULL is reached (0x00)
     {

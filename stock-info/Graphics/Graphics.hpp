@@ -200,7 +200,7 @@ class Graphics
 		void setWidth(uint8_t width);
 
 		FontStatus PlotChar(Point position, uint8_t letter, Font font, Color color);
-		FontStatus PlotString(Point position, char *string, Font font, Color color);
+		FontStatus PlotString(Point position, const char *string, Font font, Color color);
 
 		Font fontFactory(Fonts font_name);
 
