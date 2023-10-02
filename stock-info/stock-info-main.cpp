@@ -243,6 +243,7 @@ int main(int argc, char *argv[]) {
 						prices[k] = std::stof(price);
 						itr++;
 					}
+					LOG("MAIN: prices parsed");
 				//}
 				ZwGraphics::Color stkColor = ZwGraphics::Graphics::WHITE;
 				//calculate did it go up or down?
