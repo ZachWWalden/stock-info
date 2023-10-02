@@ -49,6 +49,7 @@ ZwBitmap::~ZwBitmap()
 }
 bool ZwBitmap::readBitmap(std::string filename)
 {
+	LOG(filename);
 	if(!this->sanitizeFilename(filename))
 	{
 		LOG_IO(filename, "Given FIlename is not a .bmp file.", "ZwBitmap::readBitmap");
@@ -98,6 +99,9 @@ bool ZwBitmap::readBitmap(std::string filename)
 
 	this->height = info_header.height;
 	this->width = info_header.width;
+
+	LOGV("height = ", this->height);
+	LOGV("width = ", this->width);
 
 	//read in pixel data;
 	uint32_t pixel;
