@@ -254,7 +254,7 @@ int main(int argc, char *argv[]) {
 					//TODO un hardcode
 					data = data["Time Series (Daily)"];
 					Json::Value ochlv;
-					Json::ValueIterator itr = data.begin();
+					Json::ValueIterator itr = data.end();
 					LOG("MAIN: begin price extraction");
 					for(int k = 0; k < 2; k++)
 					{
@@ -262,7 +262,7 @@ int main(int argc, char *argv[]) {
 						LOG(ochlv);
 						std::string price = ochlv["4. close"].asString();
 						prices[k] = std::stof(price);
-						itr++;
+						itr--;
 					}
 					LOG("MAIN: prices parsed");
 				//}
@@ -313,12 +313,12 @@ int main(int argc, char *argv[]) {
 					Json::Value data = stocks[i]->getData(j)->data;
 					data = data["Time Series (Daily)"];
 					Json::Value ochlv;
-					Json::ValueIterator itr = data.begin();
+					Json::ValueIterator itr = data.end();
 					for(int k = 0; k < 2; k++)
 					{
 						ochlv = *itr;
 						prices[k] = ochlv["4. close"].asFloat();
-						itr++;
+						itr--;
 					}
 				//}
 				ZwGraphics::Color stkColor = ZwGraphics::Graphics::WHITE;
