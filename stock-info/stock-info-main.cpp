@@ -221,7 +221,8 @@ int main(int argc, char *argv[]) {
 				LOG("MAIN: no scenes");
 				curScene = new ZwGraphics::Scene(&graphics_mgr, V_RES, H_RES, NUM_CHANNELS);
 				//add in ticker, scene element.
-				curScene->addElement(new ZwGraphics::StringSceneElement(&graphics_mgr, ZwGraphics::Point(H_RES - stocks[i]->getTicker().length()*9, 0), (char*)stocks[i]->getTicker().c_str(), font916, ZwGraphics::Graphics::WHITE));
+				LOG(stocks[i]->getTicker());
+				curScene->addElement(new ZwGraphics::StringSceneElement(&graphics_mgr, ZwGraphics::Point(H_RES - stocks[i]->getTicker().length()*9, 0), (char*)(stocks[i]->getTicker()).c_str(), font916, ZwGraphics::Graphics::WHITE));
 				//Load and add the sprite
 				std::string imagePath = IMAGE_PATH;
 				curScene->addElement(new ZwGraphics::SpriteSceneElement(&graphics_mgr, new ZwGraphics::Sprite(imagePath + stocks[i]->getImagePath(), ZwGraphics::Point(0,0))));
