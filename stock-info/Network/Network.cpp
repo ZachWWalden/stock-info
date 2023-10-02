@@ -119,7 +119,13 @@ void Network::buildURL(std::string ticker, ZwStock::ApiFunction apiFunction, std
 	std::string url = "";
 	if(apiFunction == ZwStock::ApiFunction::TIME_SERIES_INTRADAY)
 	{
+		LOG("buildURL: INTRSDSY");
 		url = this->BASE_URL + this->TS_INTRADAY + this->SYMBOL + ticker + this->INTERVAL + interval + this->API_KEY;
+	}
+	else if (apiFunction == ZwStock::ApiFunction::TIME_SERIES_DAILY)
+	{
+		LOG("buildURL: DAILY");
+		url = this->BASE_URL + this->TS_DAILY + this->SYMBOL + ticker + this->API_KEY;
 	}
 	this->setURL(url);
 }
