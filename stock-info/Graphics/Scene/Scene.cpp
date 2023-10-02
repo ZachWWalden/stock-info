@@ -70,6 +70,10 @@ void Scene::draw()
 		elements[i]->draw();
 	}
 }
+void Scene::setRenderTarget()
+{
+	this->graphics->setRenderTarget(this->getBuffer());
+}
 bool Scene::addElement(SceneElement* element)
 {
 	this->elements.push_back(element);

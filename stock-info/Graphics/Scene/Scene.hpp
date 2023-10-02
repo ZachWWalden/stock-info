@@ -76,6 +76,7 @@ public:
 	~Scene();
 
 	void draw();
+	void setRenderTarget();
 	bool addElement(SceneElement* element);
 
 	//Getters/Setters
