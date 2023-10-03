@@ -172,7 +172,6 @@ int main(int argc, char *argv[]) {
 		LOGV("MAIN init j = ", j);
 		Json::Value curSeries = seriesJson[j];
 		ZwStock::SeriesData* newSeries = new ZwStock::SeriesData();
-		//TODO un hardcode
 		newSeries->function = getTimeSeries(curSeries);
 		newSeries->NUM_CRON_STEPS = getNumCronSteps(curSeries) * curSeries["update_interval"].asInt();
 		newSeries->interval = curSeries["interval"].asString();
@@ -202,8 +201,9 @@ int main(int argc, char *argv[]) {
 	{
 		//acquire semaphore
 		pthread_mutex_lock(&lock);
-		LOG("MAIN get semaphore");
+		LOG("MAIN: get semaphore");
 		semAcquired = true;
+		LOG("MAIN: Begin Next Scene");
 	}
 	//measure time at start
 	auto startTime = std::chrono::high_resolution_clock::now();
@@ -239,7 +239,6 @@ int main(int argc, char *argv[]) {
 		}
 		if(semAcquired)
 		{
-		LOGV("MAIN: ani Count",animationCounter);
 		if (stocks[i]->getData(j)->dataChanged) //If graphs are to be added following the current price, this index will be j + j % 2
 		{
 			LOG("MAIN: Data CHanged, building scenes");
@@ -364,7 +363,6 @@ int main(int argc, char *argv[]) {
 	//}
 			stocks[i]->getScene(j)->setRenderTarget();
 		}
-	LOG("MAIN: scene drawn");
 	graphics_mgr.draw();
 	//measure time at end
 	auto endTime = std::chrono::high_resolution_clock::now();
