@@ -394,10 +394,10 @@ void* networkThread(void* arg)
     ZwNetwork::Network network(url);
     ZwNetwork::Response* response;
 	//get initial network data.
-	for(int i = 0; i < stocks.size(); i++)
+	for(int i = 0; i < stocks.size() && !interrupt_received; i++)
 	{
 		LOGV("NET: init i = ", i);
-		for (int j = 0; j < stocks[i]->getNumDataSeries(); j++)
+		for (int j = 0; j < stocks[i]->getNumDataSeries() && !interrupt_received; j++)
 		{
 			//acquire semaphore
 			pthread_mutex_lock(&lock);
@@ -443,10 +443,10 @@ void* networkThread(void* arg)
 		//Cron loop
 		usleep(1000*1000*NUM_SECONDS);
 		//loop through stocks and update data accordingly
-		for(int i = 0; i < stocks.size(); i++)
+		for(int i = 0; i < stocks.size() && !interrupt_received; i++)
 		{
 			LOGV("NET: i = ", i);
-			for (int j = 0; j < stocks[i]->getNumDataSeries(); j++)
+			for (int j = 0; j < stocks[i]->getNumDataSeries() && !interrupt_received; j++)
 			{
 				LOGV("NET: j = ", j);
 				ZwStock::SeriesData* curSeries = stocks[i]->getData(j);
