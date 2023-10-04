@@ -311,6 +311,7 @@ int main(int argc, char *argv[]) {
 				LOG("MAIN: rebuilding Scene");
 				curScene = stocks[i]->getScene(j);
 				LOG("MAIN: Got scene from stocks data structure");
+				LOGV("MAIN: Rebuild Scenes ticker = ", stocks[i]->getTicker());
 				//loop through and delete all scene elements except the logo and ticker. Due to how each scene's list of scene elements, the first to items in that list never need to be deleted on a data update.
 				std::vector<ZwGraphics::SceneElement*>* elements = curScene->getElements();
 				for(int k = 2; k < elements->size(); k++)
