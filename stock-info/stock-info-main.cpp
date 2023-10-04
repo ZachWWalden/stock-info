@@ -172,7 +172,6 @@ int main(int argc, char *argv[]) {
 		LOGV("MAIN init j = ", j);
 		Json::Value curSeries = seriesJson[j];
 		ZwStock::SeriesData* newSeries = new ZwStock::SeriesData();
-		//TODO un hardcode
 		newSeries->function = getTimeSeries(curSeries);
 		newSeries->NUM_CRON_STEPS = getNumCronSteps(curSeries) * curSeries["update_interval"].asInt();
 		newSeries->interval = curSeries["interval"].asString();
@@ -202,8 +201,9 @@ int main(int argc, char *argv[]) {
 	{
 		//acquire semaphore
 		pthread_mutex_lock(&lock);
-		LOG("MAIN get semaphore");
+		LOG("MAIN: get semaphore");
 		semAcquired = true;
+		LOG("MAIN: Begin Next Scene");
 	}
 	//measure time at start
 	auto startTime = std::chrono::high_resolution_clock::now();
@@ -239,11 +239,12 @@ int main(int argc, char *argv[]) {
 		}
 		if(semAcquired)
 		{
-		LOGV("MAIN: ani Count",animationCounter);
 		if (stocks[i]->getData(j)->dataChanged) //If graphs are to be added following the current price, this index will be j + j % 2
 		{
 			LOG("MAIN: Data CHanged, building scenes");
 			ZwGraphics::Scene* curScene;
+			LOGV("MAIN: i",i);
+			LOGV("MAIN: j",j);
 			//build scene.
 			//cases: no scenes, scenes.
 			if (stocks[i]->getNumScenes() == 0)
@@ -316,6 +317,8 @@ int main(int argc, char *argv[]) {
 				{
 				   delete elements->at(k);
 				}
+				//ensure rebuilt elements are added after the the non deleted elements to prevent a use after free.
+				elements->resize(2);
 				//clear the render buffer
 				graphics_mgr.setRenderTarget(curScene->getBuffer());
 				graphics_mgr.clearRenderTarget();
@@ -330,7 +333,9 @@ int main(int argc, char *argv[]) {
 					for(int k = 0; k < 2; k++)
 					{
 						ochlv = *itr;
-						prices[k] = ochlv["4. close"].asFloat();
+						LOG(ochlv);
+						std::string price = ochlv["4. close"].asString();
+						prices[k] = std::stof(price);
 						itr--;
 					}
 				//}
@@ -356,7 +361,9 @@ int main(int argc, char *argv[]) {
 				}
 				//add string scene element
 				curScene->addElement(new ZwGraphics::StringSceneElement(&graphics_mgr, ZwGraphics::Point(H_RES - (price.length() + 1)*font.width, V_RES - font.num_rows), (char*)((std::string)"$" + price).c_str(), font, stkColor));
+				LOG("MAIN: add price");
 				curScene->draw();
+				LOG("MAIN: drawn scene");
 			}
 			stocks[i]->getData(j)->dataChanged = false;
 			LOG("MAIN: DataChanged cleared");
@@ -364,7 +371,6 @@ int main(int argc, char *argv[]) {
 	//}
 			stocks[i]->getScene(j)->setRenderTarget();
 		}
-	LOG("MAIN: scene drawn");
 	graphics_mgr.draw();
 	//measure time at end
 	auto endTime = std::chrono::high_resolution_clock::now();
@@ -394,10 +400,10 @@ void* networkThread(void* arg)
     ZwNetwork::Network network(url);
     ZwNetwork::Response* response;
 	//get initial network data.
-	for(int i = 0; i < stocks.size(); i++)
+	for(int i = 0; i < stocks.size() && !interrupt_received; i++)
 	{
 		LOGV("NET: init i = ", i);
-		for (int j = 0; j < stocks[i]->getNumDataSeries(); j++)
+		for (int j = 0; j < stocks[i]->getNumDataSeries() && !interrupt_received; j++)
 		{
 			//acquire semaphore
 			pthread_mutex_lock(&lock);
@@ -427,7 +433,6 @@ void* networkThread(void* arg)
 			response->size = 0;
 			LOG("NET: init resp mem freed");
 			curSeries->data = root;
-			LOG(root);
 			//set data changed flag.
 			curSeries->dataChanged = true;
 			LOGV("NET: Resp Size = ", response->size);
@@ -443,10 +448,10 @@ void* networkThread(void* arg)
 		//Cron loop
 		usleep(1000*1000*NUM_SECONDS);
 		//loop through stocks and update data accordingly
-		for(int i = 0; i < stocks.size(); i++)
+		for(int i = 0; i < stocks.size() && !interrupt_received; i++)
 		{
 			LOGV("NET: i = ", i);
-			for (int j = 0; j < stocks[i]->getNumDataSeries(); j++)
+			for (int j = 0; j < stocks[i]->getNumDataSeries() && !interrupt_received; j++)
 			{
 				LOGV("NET: j = ", j);
 				ZwStock::SeriesData* curSeries = stocks[i]->getData(j);
