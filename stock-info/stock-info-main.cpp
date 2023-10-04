@@ -332,7 +332,8 @@ int main(int argc, char *argv[]) {
 					{
 						ochlv = *itr;
 						LOG(ochlv);
-						prices[k] = ochlv["4. close"].asString();
+						std::string price = ochlv["4. close"].asString();
+						prices[k] = std::stof(price);
 						itr--;
 					}
 				//}
