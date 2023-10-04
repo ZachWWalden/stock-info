@@ -317,6 +317,8 @@ int main(int argc, char *argv[]) {
 				{
 				   delete elements->at(k);
 				}
+				//ensure rebuilt elements are added after the the non deleted elements to prevent a use after free.
+				elements->resize(2);
 				//clear the render buffer
 				graphics_mgr.setRenderTarget(curScene->getBuffer());
 				graphics_mgr.clearRenderTarget();
