@@ -243,6 +243,8 @@ int main(int argc, char *argv[]) {
 		{
 			LOG("MAIN: Data CHanged, building scenes");
 			ZwGraphics::Scene* curScene;
+			LOGV("MAIN: i",i);
+			LOGV("MAIN: j",j);
 			//build scene.
 			//cases: no scenes, scenes.
 			if (stocks[i]->getNumScenes() == 0)
@@ -329,7 +331,8 @@ int main(int argc, char *argv[]) {
 					for(int k = 0; k < 2; k++)
 					{
 						ochlv = *itr;
-						prices[k] = ochlv["4. close"].asFloat();
+						LOG(ochlv);
+						prices[k] = ochlv["4. close"].asString();
 						itr--;
 					}
 				//}
@@ -425,7 +428,6 @@ void* networkThread(void* arg)
 			response->size = 0;
 			LOG("NET: init resp mem freed");
 			curSeries->data = root;
-			LOG(root);
 			//set data changed flag.
 			curSeries->dataChanged = true;
 			LOGV("NET: Resp Size = ", response->size);
