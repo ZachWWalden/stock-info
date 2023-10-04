@@ -207,12 +207,12 @@ public:
       const uint32_t end_time_us = GetMicrosecondCounter();
       if (show_refresh_) {
         uint32_t usec = end_time_us - start_time_us;
-        printf("\b\b\b\b\b\b\b\b%6.1fHz", 1e6 / usec);
+        //printf("\b\b\b\b\b\b\b\b%6.1fHz", 1e6 / usec);
         if (usec > largest_time && max_measure_enabled) {
           largest_time = usec;
           const float lowest_hz = 1e6 / largest_time;
-          printf(" (lowest: %.1fHz)"
-                 "\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b", lowest_hz);
+          //printf(" (lowest: %.1fHz)"
+          //       "\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b", lowest_hz);
         } else {
           // Don't measure at startup, as times will be janky.
           max_measure_enabled = (end_time_us - initial_holdoff_start) > kHoldffTimeUs;
