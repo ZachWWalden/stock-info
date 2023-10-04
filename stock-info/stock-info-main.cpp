@@ -359,7 +359,9 @@ int main(int argc, char *argv[]) {
 				}
 				//add string scene element
 				curScene->addElement(new ZwGraphics::StringSceneElement(&graphics_mgr, ZwGraphics::Point(H_RES - (price.length() + 1)*font.width, V_RES - font.num_rows), (char*)((std::string)"$" + price).c_str(), font, stkColor));
+				LOG("MAIN: add price");
 				curScene->draw();
+				LOG("MAIN: drawn scene");
 			}
 			stocks[i]->getData(j)->dataChanged = false;
 			LOG("MAIN: DataChanged cleared");
