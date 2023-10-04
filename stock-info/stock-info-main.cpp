@@ -314,15 +314,22 @@ int main(int argc, char *argv[]) {
 				LOGV("MAIN: Rebuild Scenes ticker = ", stocks[i]->getTicker());
 				//loop through and delete all scene elements except the logo and ticker. Due to how each scene's list of scene elements, the first to items in that list never need to be deleted on a data update.
 				std::vector<ZwGraphics::SceneElement*>* elements = curScene->getElements();
-				for(int k = 2; k < elements->size(); k++)
+				for(int k = 0; k < elements->size(); k++)
 				{
 				   delete elements->at(k);
 				}
 				//ensure rebuilt elements are added after the the non deleted elements to prevent a use after free.
-				elements->resize(2);
+				elements->resize(0);
 				//clear the render buffer
 				graphics_mgr.setRenderTarget(curScene->getBuffer());
 				graphics_mgr.clearRenderTarget();
+				std::string ticker = stocks[i]->getTicker();
+				curScene->addElement(new ZwGraphics::StringSceneElement(&graphics_mgr, ZwGraphics::Point(H_RES - stocks[i]->getTicker().length()*9, 0), (char*)ticker.c_str(), font916, ZwGraphics::Graphics::WHITE));
+				LOG("MAIN: add ticker scene");
+				//Load and add the sprite
+				std::string imagePath = IMAGE_PATH;
+				curScene->addElement(new ZwGraphics::SpriteSceneElement(&graphics_mgr, new ZwGraphics::Sprite(imagePath + stocks[i]->getImagePath(), ZwGraphics::Point(0,0))));
+				LOG("MAIN: add sprite scene");
 				//get price from data.
 				float prices[2];
 				//{
