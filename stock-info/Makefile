@@ -1,4 +1,4 @@
-CFLAGS=-Wall -O3 -g -Wextra -Wno-unused-parameter
+CFLAGS=-Wall -O3 -g -Wextra -Wno-unused-parameter -pg -no-pie -fno-builtin
 CXXFLAGS=$(CFLAGS) -std=c++11
 OBJDIR = .build
 #SRCS != find . -name "*.cpp"

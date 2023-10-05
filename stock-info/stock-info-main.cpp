@@ -415,6 +415,7 @@ void* networkThread(void* arg)
 		{
 			//acquire semaphore
 			pthread_mutex_lock(&lock);
+			netInitComplete = true;
 			LOG("NET: Got mutex");
 			LOGV("NET: init j = ", j);
 			ZwStock::SeriesData* curSeries = stocks[i]->getData(j);
@@ -447,8 +448,7 @@ void* networkThread(void* arg)
 			//release semaphore.
 			pthread_mutex_unlock(&lock);
 			LOG("NET: init lock released");
-			netInitComplete = true;
-			usleep(500*1000);
+			//usleep(500*1000);
 		}
 	}
 	while (!interrupt_received)
