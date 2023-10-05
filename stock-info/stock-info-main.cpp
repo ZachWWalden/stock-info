@@ -195,6 +195,8 @@ int main(int argc, char *argv[]) {
   int i = 0, j = 0;
   bool semAcquired = false;
 
+  int profCount = 0;
+
   while(!interrupt_received)
   {
 	if(!semAcquired)
@@ -232,6 +234,10 @@ int main(int argc, char *argv[]) {
 			pthread_mutex_unlock(&lock);
 			LOG("MAIN: mutex released");
 			semAcquired = false;
+			profCount++;
+			if (profCount == 100) {
+				interrupt_received = true;
+			}
 		}
 		else
 		{
