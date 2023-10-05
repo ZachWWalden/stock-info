@@ -235,7 +235,7 @@ int main(int argc, char *argv[]) {
 			LOG("MAIN: mutex released");
 			semAcquired = false;
 			profCount++;
-			if (profCount == 100) {
+			if (profCount == 50) {
 				interrupt_received = true;
 			}
 		}

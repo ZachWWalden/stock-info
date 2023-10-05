@@ -7,7 +7,7 @@
 				{
 					"api_func" : "TIME_SERIES_DAILY",
 					"interval" : "30min",
-					"update_interval" : 5,
+					"update_interval" : 2,
 					"update_unit" : "m"
 
 				},
@@ -20,7 +20,7 @@
 				{
 					"api_func" : "TIME_SERIES_DAILY",
 					"interval" : "30min",
-					"update_interval" : 5,
+					"update_interval" : 2,
 					"update_unit" : "m"
 
 				},
