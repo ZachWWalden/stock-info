@@ -384,8 +384,9 @@ int main(int argc, char *argv[]) {
 		}
 	//}
 			stocks[i]->getScene(j)->setRenderTarget();
-			graphics_mgr.draw();
 		}
+
+	graphics_mgr.draw();
 	//measure time at end
 	auto endTime = std::chrono::high_resolution_clock::now();
 	//find execution time
