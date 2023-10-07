@@ -397,7 +397,7 @@ int main(int argc, char *argv[]) {
 	int sleepTime = 33333 - (int)execTime.count();
 	LOG_INT(sleepTime);
 	//sleep
-	usleep(sleepTime); //period for 30fps
+	usleep(30000); //period for 30fps
 	LOG("MAIN: Sleep over");
   }
 
