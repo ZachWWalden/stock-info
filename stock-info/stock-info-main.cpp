@@ -384,9 +384,11 @@ int main(int argc, char *argv[]) {
 		}
 	//}
 			stocks[i]->getScene(j)->setRenderTarget();
+			LOG("MAIN render target set");
 		}
 
 	graphics_mgr.draw();
+	LOG("MAIN: Scene drawn to matrix");
 	//measure time at end
 	auto endTime = std::chrono::high_resolution_clock::now();
 	//find execution time
