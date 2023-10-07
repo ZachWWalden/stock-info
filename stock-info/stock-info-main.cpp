@@ -395,8 +395,7 @@ int main(int argc, char *argv[]) {
 	auto execTime = std::chrono::duration_cast<std::chrono::microseconds>(endTime - startTime);
 	//subtract execution time from target frame period.
 	int sleepTime = 33333 - (int)execTime.count();
-	LOG("MAIN: Sleep time calculated");
-
+	LOG_INT(sleepTime);
 	//sleep
 	usleep(sleepTime); //period for 30fps
 	LOG("MAIN: Sleep over");
