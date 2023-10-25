@@ -73,6 +73,7 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
+	usleep(1000*1000*NUM_SECONDS);
 
   // Animation finished. Shut down the RGB matrix.
   canvas->Clear();
