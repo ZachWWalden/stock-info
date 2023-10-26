@@ -65,21 +65,15 @@ int main(int argc, char *argv[]) {
   signal(SIGTERM, InterruptHandler);
   signal(SIGINT, InterruptHandler);
 
-  int colP = 0;
-  int rowP=0;
-
 	for(int rows = 0; rows < V_RES; rows++)
 	{
 		for(int cols = 0; cols < H_RES; cols++)
 		{
 			canvas->SetPixel(cols, rows, 0x0F, 0x0F, 0x0F);
-			canvas->SetPixel(colP, rowP, 0x00, 0x00, 0x00);
-			colP=cols;
-			rowP=rows;
-			usleep(1000*500);
 		}
 	}
 
+	usleep(1000*1000*NUM_SECONDS);
 
   // Animation finished. Shut down the RGB matrix.
   canvas->Clear();
